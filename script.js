@@ -7,6 +7,9 @@ const qrContainer = document.getElementById('qrcode');
 
 generateBtn.addEventListener('click', () => {
   const value = input.value.trim();
+  const colorDark = document.getElementById('qr-color').value;
+  const colorLight = document.getElementById('bg-color').value;
+  const size = parseInt(document.getElementById('qr-size').value, 10);
 
   if (!value) {
     alert('Introdu un text sau un URL.');
@@ -17,10 +20,10 @@ generateBtn.addEventListener('click', () => {
 
   qrInstance = new QRCode(qrContainer, {
     text: value,
-    width: 200,
-    height: 200,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
+    width: size,
+    height: size,
+    colorDark: colorDark,
+    colorLight: colorLight,
     correctLevel: QRCode.CorrectLevel.H
   });
 
