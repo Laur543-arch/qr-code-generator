@@ -2,20 +2,17 @@
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
-  <title>Vectron Labs – Generator coduri QR</title>
+  <title>Vectron Labs – Generator de coduri QR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png">
 
-  <!-- Open Graph (preview link) -->
-  <meta property="og:title" content="Generator de coduri QR – Vectron Labs">
-  <meta property="og:description" content="Generează coduri QR personalizate cu logo, culori și dimensiuni variabile.">
+  <meta property="og:title" content="QR Code Generator – Personalizat">
+  <meta property="og:description" content="Generează coduri QR personalizate cu logo, culori și export PNG/PDF.">
   <meta property="og:image" content="preview.png">
   <meta property="og:type" content="website">
 
   <link rel="stylesheet" href="style.css">
-  <!-- Biblioteca QRCode (presupunem că o aveai deja) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
@@ -35,37 +32,47 @@
     <section class="card card-main">
       <h1>Generează coduri QR personalizate</h1>
 
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="qr-input">Text sau URL</label>
-          <input type="text" id="qr-input" placeholder="Ex: https://vectronlabs.ro">
-        </div>
+      <div class="options-wrapper">
+        <div class="options-block">
+          <h3>Opțiuni obligatorii</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="qr-input">Text sau URL</label>
+              <input type="text" id="qr-input" placeholder="Ex: https://vectronlabs.ro">
+            </div>
 
-        <div class="form-group">
-          <label for="qr-color">Culoare QR</label>
-          <div class="color-row">
-            <input type="color" id="qr-color" value="#d32f2f">
-            <span class="color-preview" id="qr-color-preview"></span>
+            <div class="form-group">
+              <label for="qr-color">Culoare QR</label>
+              <input type="color" id="qr-color" value="#d32f2f">
+            </div>
+
+            <div class="form-group">
+              <label for="bg-color">Culoare fundal</label>
+              <input type="color" id="bg-color" value="#fff9c4">
+            </div>
+
+            <div class="form-group">
+              <label for="qr-size">Dimensiune (px)</label>
+              <input type="number" id="qr-size" min="200" max="800" value="400">
+            </div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="bg-color">Culoare fundal</label>
-          <div class="color-row">
-            <input type="color" id="bg-color" value="#fff9c4">
-            <span class="color-preview" id="bg-color-preview"></span>
+        <div class="options-block">
+          <h3>Opțiuni opționale (logo)</h3>
+          <p class="hint-text">
+            Dacă adaugi un logo, acesta va apărea în codul QR generat și în fișierul PNG descărcat.
+          </p>
+          <div class="form-grid logo-grid">
+            <div class="form-group">
+              <label for="logo-input">Logo (PNG/JPG)</label>
+              <input type="file" id="logo-input" accept="image/png, image/jpeg">
+            </div>
+            <div class="form-group form-group-inline">
+              <label>&nbsp;</label>
+              <button id="clear-logo-btn" class="btn btn-secondary">Șterge logo</button>
+            </div>
           </div>
-        </div>
-
-        <div class="form-group">
-          <label for="qr-size">Dimensiune (px)</label>
-          <input type="number" id="qr-size" min="200" max="800" value="400">
-        </div>
-
-        <div class="form-group">
-          <label for="logo-input">Logo (PNG/JPG)</label>
-          <input type="file" id="logo-input" accept="image/png, image/jpeg">
-          <button id="clear-logo-btn" class="btn btn-secondary">Șterge logo</button>
         </div>
       </div>
 
