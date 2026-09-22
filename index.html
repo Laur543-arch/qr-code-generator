@@ -1,75 +1,72 @@
-let qrInstance = null;
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Generator de coduri QR cu opțiuni avansate: culori, dimensiune, logo și export PNG/PDF. Rapid, simplu și gratuit.">
+  <meta name="keywords" content="qr code, generator qr, cod qr, qr personalizat, qr logo, qr pdf, qr png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-const input = document.getElementById('qr-input');
-const generateBtn = document.getElementById('generate-btn');
-const downloadBtn = document.getElementById('download-btn');
-const qrContainer = document.getElementById('qrcode');
-const logoInput = document.getElementById('logo-input');
+  <title>QR Code Generator – Personalizat</title>
 
-generateBtn.addEventListener('click', () => {
-  const value = input.value.trim();
-  const colorDark = document.getElementById('qr-color').value;
-  const colorLight = document.getElementById('bg-color').value;
-  const size = parseInt(document.getElementById('qr-size').value, 10);
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
 
-  if (!value) {
-    alert('Introdu un text sau un URL.');
-    return;
-  }
+<body>
 
-  qrContainer.innerHTML = '';
+  <!-- HEADER -->
+  <header class="header">
+    <h2>QR Code Generator</h2>
+  </header>
 
-  qrInstance = new QRCode(qrContainer, {
-    text: value,
-    width: size,
-    height: size,
-    colorDark: colorDark,
-    colorLight: colorLight,
-    correctLevel: QRCode.CorrectLevel.H
-  });
+  <!-- MAIN CONTENT -->
+  <div class="container">
 
-  downloadBtn.disabled = false;
-});
+    <h1>Generează coduri QR personalizate</h1>
 
-downloadBtn.addEventListener('click', () => {
-  if (!qrInstance) return;
+    <label for="qr-input">Text sau URL</label>
+    <input id="qr-input" type="text" placeholder="Introdu text sau link">
 
-  const canvas = qrContainer.querySelector('canvas');
-  if (!canvas) {
-    alert('Nu s-a găsit canvas-ul QR.');
-    return;
-  }
+    <label for="qr-color">Culoare QR</label>
+    <input id="qr-color" type="color" value="#000000">
 
-  const ctx = canvas.getContext('2d');
+    <label for="bg-color">Culoare fundal</label>
+    <input id="bg-color" type="color" value="#ffffff">
 
-  if (logoInput.files && logoInput.files[0]) {
-    const logo = new Image();
-    logo.src = URL.createObjectURL(logoInput.files[0]);
+    <label for="qr-size">Dimensiune (px)</label>
+    <input id="qr-size" type="number" value="200" min="100" max="800">
 
-    logo.onload = () => {
-      const logoSize = canvas.width * 0.25;
-      const x = (canvas.width - logoSize) / 2;
-      const y = (canvas.height - logoSize) / 2;
+    <label for="logo-input">Logo (PNG/JPG)</label>
+    <input id="logo-input" type="file" accept="image/*">
 
-      ctx.drawImage(logo, x, y, logoSize, logoSize);
+    <button id="generate-btn">Generează QR</button>
 
-      const dataURL = canvas.toDataURL("image/png");
+    <div id="qr-wrapper">
+      <div id="qrcode"></div>
+    </div>
 
-      const link = document.createElement('a');
-      link.href = dataURL;
-      link.download = 'qrcode.png';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
-  } else {
-    const dataURL = canvas.toDataURL("image/png");
+    <button id="download-btn" disabled>Descarcă PNG</button>
 
-    const link = document.createElement('a');
-    link.href = dataURL;
-    link.download = 'qrcode.png';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-});
+    <!-- PREMIUM SECTION -->
+    <div class="premium-box">
+      <h3>Funcții Premium</h3>
+      <ul>
+        <li>Export PDF</li>
+        <li>Logo avansat (rotire, transparență, poziționare)</li>
+        <li>QR cu margini rotunjite</li>
+        <li>QR cu gradient</li>
+      </ul>
+
+      <button id="pdf-btn" disabled>Export PDF (în curând)</button>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>© 2026 QR Generator • Creat de Laurentiu</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
