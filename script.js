@@ -5,13 +5,29 @@ const generateBtn = document.getElementById('generate-btn');
 const downloadBtn = document.getElementById('download-btn');
 const qrContainer = document.getElementById('qrcode');
 const logoInput = document.getElementById('logo-input');
+const clearLogoBtn = document.getElementById('clear-logo-btn');
 const pdfBtn = document.getElementById('pdf-btn');
+
+const qrColorInput = document.getElementById('qr-color');
+const bgColorInput = document.getElementById('bg-color');
+const qrColorPreview = document.getElementById('qr-color-preview');
+const bgColorPreview = document.getElementById('bg-color-preview');
+
+/* PREVIEW CULORI */
+function updateColorPreviews() {
+  qrColorPreview.style.backgroundColor = qrColorInput.value;
+  bgColorPreview.style.backgroundColor = bgColorInput.value;
+}
+
+qrColorInput.addEventListener('input', updateColorPreviews);
+bgColorInput.addEventListener('input', updateColorPreviews);
+updateColorPreviews();
 
 /* GENERARE QR */
 generateBtn.addEventListener('click', () => {
   const value = input.value.trim();
-  const colorDark = document.getElementById('qr-color').value;
-  const colorLight = document.getElementById('bg-color').value;
+  const colorDark = qrColorInput.value;
+  const colorLight = bgColorInput.value;
   const size = parseInt(document.getElementById('qr-size').value, 10);
 
   if (!value) {
@@ -52,16 +68,56 @@ downloadBtn.addEventListener('click', () => {
 
     logo.onload = () => {
       const qrSize = canvas.width;
+      const logoSize = qrSize * 0.20; // ~20% din QR
 
-      // Logo redimensionat automat la 20% din QR
-      const logoSize = qrSize * 0.20;
-
-      // Centrare perfectă
       const x = (qrSize - logoSize) / 2;
       const y = (qrSize - logoSize) / 2;
 
       ctx.drawImage(logo, x, y, logoSize, logoSize);
 
       const dataURL = canvas.toDataURL("image/png");
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'qrcode.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+  } else {
+    const dataURL = canvas.toDataURL("image/png");
+    const link = document.createElement('a');
+    link.href = dataURL;
+    link.download = 'qrcode.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+});
 
-      const link
+/* ȘTERGERE LOGO + REGENERARE QR FĂRĂ LOGO */
+clearLogoBtn.addEventListener('click', () => {
+  logoInput.value = "";
+
+  const value = input.value.trim();
+  if (!value) return;
+
+  const colorDark = qrColorInput.value;
+  const colorLight = bgColorInput.value;
+  const size = parseInt(document.getElementById('qr-size').value, 10);
+
+  qrContainer.innerHTML = '';
+
+  qrInstance = new QRCode(qrContainer, {
+    text: value,
+    width: size,
+    height: size,
+    colorDark: colorDark,
+    colorLight: colorLight,
+    correctLevel: QRCode.CorrectLevel.H
+  });
+});
+
+/* EXPORT PDF – placeholder premium */
+pdfBtn.addEventListener('click', () => {
+  alert("Funcția PDF va fi disponibilă în versiunea premium.");
+});
