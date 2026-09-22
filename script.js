@@ -4,7 +4,10 @@ const input = document.getElementById('qr-input');
 const generateBtn = document.getElementById('generate-btn');
 const downloadBtn = document.getElementById('download-btn');
 const qrContainer = document.getElementById('qrcode');
+const logoInput = document.getElementById('logo-input');
+const pdfBtn = document.getElementById('pdf-btn');
 
+/* GENERARE QR */
 generateBtn.addEventListener('click', () => {
   const value = input.value.trim();
   const colorDark = document.getElementById('qr-color').value;
@@ -28,8 +31,10 @@ generateBtn.addEventListener('click', () => {
   });
 
   downloadBtn.disabled = false;
+  pdfBtn.disabled = false;
 });
 
+/* DESCĂRCARE PNG + LOGO */
 downloadBtn.addEventListener('click', () => {
   if (!qrInstance) return;
 
@@ -39,12 +44,41 @@ downloadBtn.addEventListener('click', () => {
     return;
   }
 
-  const dataURL = canvas.toDataURL("image/png");
+  const ctx = canvas.getContext('2d');
 
-  const link = document.createElement('a');
-  link.href = dataURL;
-  link.download = 'qrcode.png';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  if (logoInput.files && logoInput.files[0]) {
+    const logo = new Image();
+    logo.src = URL.createObjectURL(logoInput.files[0]);
+
+    logo.onload = () => {
+      const logoSize = canvas.width * 0.25;
+      const x = (canvas.width - logoSize) / 2;
+      const y = (canvas.height - logoSize) / 2;
+
+      ctx.drawImage(logo, x, y, logoSize, logoSize);
+
+      const dataURL = canvas.toDataURL("image/png");
+
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'qrcode.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+  } else {
+    const dataURL = canvas.toDataURL("image/png");
+
+    const link = document.createElement('a');
+    link.href = dataURL;
+    link.download = 'qrcode.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+});
+
+/* EXPORT PDF — funcție premium (placeholder) */
+pdfBtn.addEventListener('click', () => {
+  alert("Funcția PDF va fi disponibilă în versiunea premium.");
 });
