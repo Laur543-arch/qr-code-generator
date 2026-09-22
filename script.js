@@ -45,32 +45,34 @@ generateBtn.addEventListener('click', () => {
     correctLevel: QRCode.CorrectLevel.H
   });
 
-  // După ce QR-ul este generat, dacă există logo, îl desenăm și în preview
-  setTimeout(() => {
+  downloadBtn.disabled = false;
+  pdfBtn.disabled = false;
+
+  /* OBSERVER — detectează apariția canvas-ului */
+  const observer = new MutationObserver(() => {
     const canvas = qrContainer.querySelector('canvas');
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    observer.disconnect(); // oprim observarea
 
     if (logoInput.files && logoInput.files[0]) {
+      const ctx = canvas.getContext('2d');
       const logo = new Image();
       logo.src = URL.createObjectURL(logoInput.files[0]);
 
       logo.onload = () => {
         const qrSize = canvas.width;
-        const logoSize = qrSize * 0.20; // ~20% din QR
-
+        const logoSize = qrSize * 0.20;
         const x = (qrSize - logoSize) / 2;
         const y = (qrSize - logoSize) / 2;
-
         ctx.drawImage(logo, x, y, logoSize, logoSize);
       };
     }
-  }, 100);
+  });
 
-  downloadBtn.disabled = false;
-  pdfBtn.disabled = false;
+  observer.observe(qrContainer, { childList: true });
 });
+
 
 /* DESCĂRCARE PNG (QR + logo dacă există) */
 downloadBtn.addEventListener('click', () => {
