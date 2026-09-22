@@ -10,24 +10,23 @@ const pdfBtn = document.getElementById('pdf-btn');
 
 const qrColorInput = document.getElementById('qr-color');
 const bgColorInput = document.getElementById('bg-color');
+const sizeInput = document.getElementById('qr-size');
 
 /* Dezactivăm descărcarea când se schimbă datele */
 function markDirty() {
   downloadBtn.disabled = true;
 }
 
-input.addEventListener('input', markDirty);
-qrColorInput.addEventListener('input', markDirty);
-bgColorInput.addEventListener('input', markDirty);
-document.getElementById('qr-size').addEventListener('input', markDirty);
-logoInput.addEventListener('change', markDirty);
+[input, qrColorInput, bgColorInput, sizeInput, logoInput].forEach(el => {
+  el.addEventListener('input', markDirty);
+});
 
 /* GENERARE QR + LOGO ÎN PREVIEW */
 generateBtn.addEventListener('click', () => {
   const value = input.value.trim();
   const colorDark = qrColorInput.value;
   const colorLight = bgColorInput.value;
-  const size = parseInt(document.getElementById('qr-size').value, 10);
+  const size = parseInt(sizeInput.value, 10);
 
   if (!value) {
     alert('Introdu un text sau un URL.');
@@ -72,7 +71,6 @@ generateBtn.addEventListener('click', () => {
 
   observer.observe(qrContainer, { childList: true });
 });
-
 
 /* DESCĂRCARE PNG (QR + logo dacă există) */
 downloadBtn.addEventListener('click', () => {
@@ -128,7 +126,7 @@ clearLogoBtn.addEventListener('click', () => {
 
   const colorDark = qrColorInput.value;
   const colorLight = bgColorInput.value;
-  const size = parseInt(document.getElementById('qr-size').value, 10);
+  const size = parseInt(sizeInput.value, 10);
 
   qrContainer.innerHTML = '';
 
