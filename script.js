@@ -34,7 +34,7 @@ generateBtn.addEventListener('click', () => {
   pdfBtn.disabled = false;
 });
 
-/* DESCĂRCARE PNG + LOGO */
+/* DESCĂRCARE PNG + LOGO CENTRAT */
 downloadBtn.addEventListener('click', () => {
   if (!qrInstance) return;
 
@@ -51,34 +51,17 @@ downloadBtn.addEventListener('click', () => {
     logo.src = URL.createObjectURL(logoInput.files[0]);
 
     logo.onload = () => {
-      const logoSize = canvas.width * 0.25;
-      const x = (canvas.width - logoSize) / 2;
-      const y = (canvas.height - logoSize) / 2;
+      const qrSize = canvas.width;
+
+      // Logo redimensionat automat la 20% din QR
+      const logoSize = qrSize * 0.20;
+
+      // Centrare perfectă
+      const x = (qrSize - logoSize) / 2;
+      const y = (qrSize - logoSize) / 2;
 
       ctx.drawImage(logo, x, y, logoSize, logoSize);
 
       const dataURL = canvas.toDataURL("image/png");
 
-      const link = document.createElement('a');
-      link.href = dataURL;
-      link.download = 'qrcode.png';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
-  } else {
-    const dataURL = canvas.toDataURL("image/png");
-
-    const link = document.createElement('a');
-    link.href = dataURL;
-    link.download = 'qrcode.png';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-});
-
-/* EXPORT PDF — funcție premium (placeholder) */
-pdfBtn.addEventListener('click', () => {
-  alert("Funcția PDF va fi disponibilă în versiunea premium.");
-});
+      const link
