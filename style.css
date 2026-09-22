@@ -30,7 +30,9 @@ label {
   font-size: 14px;
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="color"],
+input[type="number"] {
   width: 100%;
   padding: 8px 10px;
   border-radius: 4px;
@@ -71,3 +73,4 @@ button:disabled {
   width: 200px;
   height: 200px;
 }
+
