@@ -1,1 +1,27 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Code Generator</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>QR Code Generator</h1>
 
+    <label for="qr-input">Text sau URL</label>
+    <input id="qr-input" type="text" placeholder="Introdu text sau link">
+
+    <button id="generate-btn">Generează QR</button>
+
+    <div id="qr-wrapper">
+      <div id="qrcode"></div>
+    </div>
+
+    <button id="download-btn" disabled>Descarcă PNG</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
