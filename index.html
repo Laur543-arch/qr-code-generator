@@ -2,86 +2,107 @@
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
-  <meta name="description" content="Generator de coduri QR cu opțiuni avansate: culori, dimensiune, logo și export PNG/PDF. Rapid, simplu și gratuit.">
-  <meta name="keywords" content="qr code, generator qr, cod qr, qr personalizat, qr logo, qr pdf, qr png">
+  <title>Vectron Labs – Generator coduri QR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- FAVICON -->
-  <link rel="icon" type="image/png" href="https://laur543-arch.github.io/qr-code-generator/favicon.png">
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png">
 
-  <!-- OPEN GRAPH -->
-  <meta property="og:title" content="QR Code Generator – Personalizat">
-  <meta property="og:description" content="Generează coduri QR personalizate cu logo, culori și export PNG/PDF.">
-  <meta property="og:image" content="https://laur543-arch.github.io/qr-code-generator/preview.png">
+  <!-- Open Graph (preview link) -->
+  <meta property="og:title" content="Generator de coduri QR – Vectron Labs">
+  <meta property="og:description" content="Generează coduri QR personalizate cu logo, culori și dimensiuni variabile.">
+  <meta property="og:image" content="preview.png">
   <meta property="og:type" content="website">
 
-  <title>QR Code Generator – Personalizat</title>
-
   <link rel="stylesheet" href="style.css">
+  <!-- Biblioteca QRCode (presupunem că o aveai deja) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
-
 <body>
-
-  <!-- HEADER -->
-  <header class="header">
-    <h2>QR Code Generator</h2>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <img src="favicon.png" alt="Vectron Labs" class="brand-logo">
+        <span class="brand-name">Vectron Labs</span>
+      </div>
+      <div class="header-title">
+        Generator de coduri QR
+      </div>
+    </div>
   </header>
 
-  <!-- MAIN CONTENT -->
-  <div class="container">
+  <main class="app-main">
+    <section class="card card-main">
+      <h1>Generează coduri QR personalizate</h1>
 
-    <h1>Generează coduri QR personalizate</h1>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="qr-input">Text sau URL</label>
+          <input type="text" id="qr-input" placeholder="Ex: https://vectronlabs.ro">
+        </div>
 
-    <label for="qr-input">Text sau URL</label>
-    <input id="qr-input" type="text" placeholder="Introdu text sau link">
+        <div class="form-group">
+          <label for="qr-color">Culoare QR</label>
+          <div class="color-row">
+            <input type="color" id="qr-color" value="#d32f2f">
+            <span class="color-preview" id="qr-color-preview"></span>
+          </div>
+        </div>
 
-    <label for="qr-color">Culoare QR</label>
-    <input id="qr-color" type="color" value="#000000">
+        <div class="form-group">
+          <label for="bg-color">Culoare fundal</label>
+          <div class="color-row">
+            <input type="color" id="bg-color" value="#fff9c4">
+            <span class="color-preview" id="bg-color-preview"></span>
+          </div>
+        </div>
 
-    <label for="bg-color">Culoare fundal</label>
-    <input id="bg-color" type="color" value="#ffffff">
+        <div class="form-group">
+          <label for="qr-size">Dimensiune (px)</label>
+          <input type="number" id="qr-size" min="200" max="800" value="400">
+        </div>
 
-    <label for="qr-size">Dimensiune (px)</label>
-    <input id="qr-size" type="number" value="200" min="100" max="800">
+        <div class="form-group">
+          <label for="logo-input">Logo (PNG/JPG)</label>
+          <input type="file" id="logo-input" accept="image/png, image/jpeg">
+          <button id="clear-logo-btn" class="btn btn-secondary">Șterge logo</button>
+        </div>
+      </div>
 
-    <label for="logo-input">Logo (PNG/JPG)</label>
-    <input id="logo-input" type="file" accept="image/*">
+      <div class="actions-row">
+        <button id="generate-btn" class="btn btn-primary">Generează QR</button>
+        <button id="download-btn" class="btn btn-outline" disabled>Descarcă PNG</button>
+      </div>
 
-    <button id="generate-btn">Generează QR</button>
+      <div class="qr-wrapper">
+        <div id="qrcode" class="qr-container"></div>
+      </div>
+    </section>
 
-    <div id="qr-wrapper">
-      <div id="qrcode"></div>
-    </div>
-
-    <button id="download-btn" disabled>Descarcă PNG</button>
-
-    <!-- PREMIUM SECTION -->
-    <div class="premium-box">
-      <h3>Funcții Premium</h3>
-      <ul>
+    <section class="card card-premium">
+      <h2>Funcții Premium</h2>
+      <ul class="premium-list">
         <li>Export PDF</li>
-        <li>Logo avansat (rotire, transparență, poziționare)</li>
-        <li>QR cu margini rotunjite</li>
+        <li>Logo variabil: rotire, transparență, poziționare</li>
+        <li>QR cu margine</li>
         <li>QR cu gradient</li>
       </ul>
+      <button id="pdf-btn" class="btn btn-disabled" disabled>Export PDF (în curând)</button>
+    </section>
 
-      <button id="pdf-btn" disabled>Export PDF (în curând)</button>
-    </div>
-
-    <!-- CONTACT -->
-    <div class="contact-box">
-      <h3>Contact & Feedback</h3>
-      <p>Dacă ai sugestii, idei sau vrei să colaborăm:</p>
+    <section class="card card-contact">
+      <h2>Contact & Feedback</h2>
+      <p>
+        Dacă vrei să integrezi acest generator în fluxurile tale sau să dezvolți funcții premium,
+        putem discuta o colaborare dedicată.
+      </p>
       <p><strong>Email:</strong> laurentiu@example.com</p>
       <p><strong>WhatsApp:</strong> 07xx xxx xxx</p>
-    </div>
+    </section>
+  </main>
 
-  </div>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <p>© 2026 QR Generator • Creat de Laurentiu</p>
+  <footer class="app-footer">
+    <span>© Vectron Labs – Generator coduri QR</span>
   </footer>
 
   <script src="script.js"></script>
