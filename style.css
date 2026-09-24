@@ -351,6 +351,40 @@ button {
     border-radius: 6px;
 }
 
+/* PROIECTE SALVATE */
+.project-list {
+    margin-top: 12px;
+    list-style: none;
+    padding-left: 0;
+}
+
+.project-list li {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    padding: 8px 10px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.project-list li span {
+    font-size: 13px;
+}
+
+.delete-project {
+    background: transparent;
+    border: none;
+    color: #b91c1c;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.delete-project:hover {
+    text-decoration: underline;
+}
+
 /* Footer */
 .app-footer {
     margin-top: 20px;
