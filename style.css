@@ -1,215 +1,336 @@
-<!DOCTYPE html>
-<html lang="ro">
-<head>
-    <meta charset="UTF-8">
-    <title>Qrio – Generator QR Premium</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    <link rel="stylesheet" href="style.css">
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f4f5f7;
+    color: #1f2430;
+}
 
-    <script src="js/qrcode.min.js"></script>
-    <script src="js/jspdf.umd.min.js"></script>
-    <script src="js/xlsx.full.min.js"></script>
-    <script src="js/jszip.min.js"></script>
-</head>
-<body>
+/* Shell general */
+.app-shell {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+}
 
-<div class="app-shell">
+/* Header */
+.app-header {
+    margin-bottom: 24px;
+}
 
-    <!-- HEADER -->
-    <header class="app-header">
-        <div class="brand">
-            <div class="brand-logo">Q</div>
-            <div class="brand-text">
-                <h1>Qrio</h1>
-                <p class="header-subtitle">Configurează, verifică și descarcă în câteva secunde.</p>
-            </div>
-        </div>
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 
-        <div class="lang-switcher">
-            <button type="button" data-lang="auto" class="lang-button active">Browser</button>
-            <button type="button" data-lang="en" class="lang-button">English</button>
-        </div>
-    </header>
+.brand-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #4b2bb3;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
 
-    <!-- MAIN -->
-    <main class="app-main">
+.brand-text h1 {
+    font-size: 22px;
+    font-weight: 600;
+}
 
-        <!-- STÂNGA: CONFIGURARE -->
-        <section class="config-column">
+.brand-text p {
+    font-size: 14px;
+    color: #6b7280;
+}
 
-            <!-- CONȚINUT -->
-            <div class="card config-card">
-                <h2>Conținut</h2>
+.header-subtitle {
+    margin-top: 2px;
+}
 
-                <label for="qr-input">URL sau text</label>
-                <input id="qr-input" type="text" placeholder="https://exemplu.ro">
+/* Selector de limbă */
+.lang-switcher {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+}
 
-                <div class="field-row">
-                    <span id="content-status" class="status-pill status-ok">Conținut valid</span>
-                    <button id="reset-btn" type="button" class="text-button">Reset</button>
-                </div>
-            </div>
+.lang-button {
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #374151;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 12px;
+    cursor: pointer;
+}
 
-            <!-- ASPECT -->
-            <div class="card config-card">
-                <h2>Aspect</h2>
+.lang-button.active {
+    border-color: #4b2bb3;
+    color: #4b2bb3;
+    background: #f3e8ff;
+}
 
-                <div class="field-row">
-                    <div class="field-block">
-                        <label for="qr-color">Culoare QR</label>
-                        <input id="qr-color" type="color" value="#2b1b5f">
-                    </div>
-                    <div class="field-block">
-                        <label for="bg-color">Culoare fundal</label>
-                        <input id="bg-color" type="color" value="#ffffff">
-                    </div>
-                </div>
+/* Layout principal */
+.app-main {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 20px;
+}
 
-                <label for="qr-size">Dimensiune</label>
-                <div class="slider-row">
-                    <input id="qr-size" type="range" min="200" max="600" value="400">
-                    <span id="qr-size-label">400 px</span>
-                </div>
+/* Carduri */
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px 16px 18px;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
 
-                <div class="field-row">
-                    <span id="contrast-status" class="status-pill status-ok">
-                        Contrast bun, ușor de scanare
-                    </span>
-                </div>
-            </div>
+.config-card + .config-card {
+    margin-top: 12px;
+}
 
-            <!-- LOGO -->
-            <div class="card config-card">
-                <h2>Logo</h2>
+.card h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
 
-                <label for="logo-input">Fișier logo (PNG/JPG)</label>
-                <input id="logo-input" type="file" accept="image/*">
+/* Coloane */
+.config-column {
+    display: flex;
+    flex-direction: column;
+}
 
-                <div class="field-row">
-                    <button id="clear-logo-btn" type="button" class="text-button">Șterge logo</button>
-                </div>
+.preview-column {
+    display: flex;
+}
 
-                <label for="logo-scale">Dimensiune logo</label>
-                <div class="slider-row">
-                    <input id="logo-scale" type="range" min="10" max="40" value="22">
-                    <span id="logo-scale-label">22%</span>
-                </div>
+/* Field layout */
+label {
+    font-size: 13px;
+    color: #4b5563;
+    margin-bottom: 4px;
+    display: block;
+}
 
-                <label for="logo-opacity">Transparență logo</label>
-                <div class="slider-row">
-                    <input id="logo-opacity" type="range" min="0" max="100" value="0">
-                    <span id="logo-opacity-label">0%</span>
-                </div>
+input[type="text"],
+input[type="file"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 13px;
+    margin-bottom: 8px;
+    background: #f9fafb;
+}
 
-                <label for="logo-position">Poziție logo</label>
-                <select id="logo-position">
-                    <option value="centru">Centru</option>
-                    <option value="top">Sus</option>
-                    <option value="bottom">Jos</option>
-                    <option value="left">Stânga</option>
-                    <option value="right">Dreapta</option>
-                </select>
-            </div>
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+    outline: none;
+    border-color: #4b2bb3;
+    background: #ffffff;
+}
 
-            <!-- EFECTE AVANSATE -->
-            <div class="card config-card">
-                <h2>Efecte avansate</h2>
+/* Color inputs */
+input[type="color"] {
+    width: 40px;
+    height: 28px;
+    padding: 0;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+}
 
-                <div class="field-row">
-                    <label for="gradient-enable">Gradient QR</label>
-                    <select id="gradient-enable">
-                        <option value="none">Fără</option>
-                        <option value="linear">Linear</option>
-                    </select>
-                </div>
+/* Field rows */
+.field-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 6px;
+}
 
-                <div class="field-row">
-                    <div class="field-block">
-                        <label for="gradient-color1">Culoare 1</label>
-                        <input id="gradient-color1" type="color" value="#2b1b5f">
-                    </div>
-                    <div class="field-block">
-                        <label for="gradient-color2">Culoare 2</label>
-                        <input id="gradient-color2" type="color" value="#000000">
-                    </div>
-                </div>
+.field-block {
+    flex: 1;
+}
 
-                <div class="field-row">
-                    <div class="field-block">
-                        <label for="border-color">Culoare margine</label>
-                        <input id="border-color" type="color" value="#2b1b5f">
-                    </div>
-                    <div class="field-block">
-                        <label for="border-size">Grosime margine</label>
-                        <input id="border-size" type="number" min="0" max="20" value="2">
-                    </div>
-                </div>
-            </div>
+/* Slider */
+.slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
 
-            <!-- BATCH QR -->
-            <div class="card config-card">
-                <h2>Batch QR</h2>
+input[type="range"] {
+    flex: 1;
+}
 
-                <label for="batch-input">Fișier Excel (XLSX)</label>
-                <input id="batch-input" type="file" accept=".xlsx">
+/* Status pills */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+}
 
-                <label for="batch-column">Coloana cu text/URL</label>
-                <input id="batch-column" type="text" placeholder="ex: A">
+.status-ok {
+    background: #ecfdf3;
+    color: #166534;
+}
 
-                <button id="batch-start" type="button" class="primary-button" disabled>
-                    Generează QR-uri
-                </button>
+.status-warn {
+    background: #fffbeb;
+    color: #92400e;
+}
 
-                <div id="batch-progress" class="batch-progress hidden">
-                    <div id="batch-bar"></div>
-                    <span id="batch-status">0%</span>
-                </div>
-            </div>
+.status-bad {
+    background: #fef2f2;
+    color: #b91c1c;
+}
 
-        </section>
+/* Butoane */
+button {
+    font-size: 13px;
+    cursor: pointer;
+}
 
-        <!-- DREAPTA: PREVIZUALIZARE -->
-        <section class="preview-column">
+.text-button {
+    border: none;
+    background: transparent;
+    color: #4b2bb3;
+    padding: 4px 0;
+}
 
-            <div class="card preview-card">
-                <div class="preview-header">
-                    <h2>Previzualizare</h2>
-                    <span id="scan-status" class="status-pill status-ok">
-                        Scanabil, contrast bun
-                    </span>
-                </div>
+.text-button:hover {
+    text-decoration: underline;
+}
 
-                <div class="preview-body">
-                    <div id="qrcode" class="qr-preview"></div>
-                </div>
+.primary-button {
+    border: none;
+    border-radius: 999px;
+    padding: 8px 16px;
+    background: #4b2bb3;
+    color: #ffffff;
+    font-weight: 500;
+}
 
-                <div class="preview-footer">
-                    <button id="download-btn" type="button" class="primary-button" disabled>
-                        Descarcă PNG
-                    </button>
-                    <button id="pdf-btn" type="button" class="secondary-button" disabled>
-                        Descarcă PDF
-                    </button>
-                    <button id="svg-btn" type="button" class="secondary-button" disabled>
-                        Descarcă SVG
-                    </button>
-                </div>
-            </div>
+.primary-button:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
 
-        </section>
+.secondary-button {
+    border: none;
+    border-radius: 999px;
+    padding: 8px 14px;
+    background: #e5e7eb;
+    color: #374151;
+    font-weight: 500;
+}
 
-    </main>
+.secondary-button:disabled {
+    background: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
 
-    <!-- FOOTER -->
-    <footer class="app-footer">
-        <span>Qrio · Generator QR Premium</span>
-    </footer>
+/* Previzualizare */
+.preview-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
 
-</div>
+.preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
 
-<script src="script.js"></script>
+.preview-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
 
-</body>
-</html>
+.qr-preview {
+    background: #ffffff;
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
 
+.preview-footer {
+    display: flex;
+    gap: 8px;
+}
+
+/* Batch QR */
+.batch-progress {
+    margin-top: 12px;
+    background: #e5e7eb;
+    border-radius: 8px;
+    height: 22px;
+    position: relative;
+    overflow: hidden;
+}
+
+.batch-progress.hidden {
+    display: none;
+}
+
+#batch-bar {
+    height: 100%;
+    width: 0%;
+    background: #4b2bb3;
+    transition: width 0.2s ease;
+}
+
+#batch-status {
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Footer */
+.app-footer {
+    margin-top: 20px;
+    font-size: 12px;
+    color: #9ca3af;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .app-main {
+        grid-template-columns: 1fr;
+    }
+
+    .preview-column {
+        margin-top: 12px;
+    }
+}
