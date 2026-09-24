@@ -5,12 +5,12 @@
     <title>Qrio – Generator QR Premium</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- Librării -->
     <script src="js/qrcode.min.js"></script>
     <script src="js/jspdf.umd.min.js"></script>
+    <script src="js/xlsx.full.min.js"></script>
+    <script src="js/jszip.min.js"></script>
 </head>
 <body>
 
@@ -147,6 +147,26 @@
                 </div>
             </div>
 
+            <!-- BATCH QR -->
+            <div class="card config-card">
+                <h2>Batch QR</h2>
+
+                <label for="batch-input">Fișier Excel (XLSX)</label>
+                <input id="batch-input" type="file" accept=".xlsx">
+
+                <label for="batch-column">Coloana cu text/URL</label>
+                <input id="batch-column" type="text" placeholder="ex: A">
+
+                <button id="batch-start" type="button" class="primary-button" disabled>
+                    Generează QR-uri
+                </button>
+
+                <div id="batch-progress" class="batch-progress hidden">
+                    <div id="batch-bar"></div>
+                    <span id="batch-status">0%</span>
+                </div>
+            </div>
+
         </section>
 
         <!-- DREAPTA: PREVIZUALIZARE -->
@@ -188,7 +208,6 @@
 
 </div>
 
-<!-- SCRIPT -->
 <script src="script.js"></script>
 
 </body>
