@@ -262,3 +262,40 @@ input[type="color"] {
     padding: 8px;
   }
 }
+
+/* ============================
+   SELECTOR LIMBĂ (RO / EN)
+   ============================ */
+
+.lang-switch {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.lang-btn {
+  background: #ffffff;
+  border: 1px solid #0078d4;
+  color: #0078d4;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lang-btn:hover {
+  background: #e6f2ff;
+}
+
+.lang-btn.active {
+  background: #0078d4;
+  color: #ffffff;
+  border-color: #005ea6;
+}
+
+@media (max-width: 600px) {
+  .lang-switch {
+    margin-top: 6px;
+  }
+}
