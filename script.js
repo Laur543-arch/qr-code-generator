@@ -1,9 +1,7 @@
-let qr;
 let logoImage = null;
-
 const { jsPDF } = window.jspdf;
 
-// Elemente
+// Elemente UI
 const inputContent = document.getElementById("qr-input");
 const inputQrColor = document.getElementById("qr-color");
 const inputBgColor = document.getElementById("bg-color");
@@ -34,9 +32,13 @@ const downloadBtn = document.getElementById("download-btn");
 const pdfBtn = document.getElementById("pdf-btn");
 const svgBtn = document.getElementById("svg-btn");
 
-const qrContainer = document.getElementById("qrcode);
+const qrContainer = document.getElementById("qrcode");
 
-// Util: contrast simplu (luminanță)
+
+// -------------------------
+// UTILITARE
+// -------------------------
+
 function getLuminance(hex) {
     const c = hex.replace("#", "");
     const r = parseInt(c.substr(0, 2), 16) / 255;
@@ -94,6 +96,11 @@ function validateContent() {
     return true;
 }
 
+
+// -------------------------
+// GENERARE QR
+// -------------------------
+
 function generateQR() {
     if (!validateContent()) return;
 
@@ -101,7 +108,8 @@ function generateQR() {
 
     const size = parseInt(inputSize.value, 10);
 
-    qr = new QRCode(qrContainer, {
+    // Generăm QR-ul pe canvas
+    new QRCode(qrContainer, {
         text: inputContent.value.trim(),
         width: size,
         height: size,
@@ -110,20 +118,36 @@ function generateQR() {
         correctLevel: QRCode.CorrectLevel.H
     });
 
-    // După generare, activăm butoanele
+    updateContrastStatus();
+
     downloadBtn.disabled = false;
     pdfBtn.disabled = false;
     svgBtn.disabled = false;
 
-    updateContrastStatus();
+    // Așteptăm canvas-ul
+    setTimeout(() => {
+        const canvas = qrContainer.querySelector("canvas");
+        if (!canvas) return;
 
-    // Logo simplu: desenăm peste canvas
-    if (logoImage) {
-        setTimeout(() => {
-            const canvas = qrContainer.querySelector("canvas");
-            if (!canvas) return;
+        const ctx = canvas.getContext("2d");
 
-            const ctx = canvas.getContext("2d");
+        // GRADIENT
+        if (gradientEnable.value === "linear") {
+            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            grad.addColorStop(0, gradientColor1.value);
+            grad.addColorStop(1, gradientColor2.value);
+
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            ctx.putImageData(imgData, 0, 0);
+
+            ctx.globalCompositeOperation = "source-in";
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.globalCompositeOperation = "source-over";
+        }
+
+        // LOGO
+        if (logoImage) {
             const logoSize = (logoScale.value / 100) * canvas.width;
             const opacity = 1 - logoOpacity.value / 100;
 
@@ -139,19 +163,24 @@ function generateQR() {
             ctx.globalAlpha = opacity;
             ctx.drawImage(logoImage, x, y, logoSize, logoSize);
             ctx.restore();
+        }
 
-            // Margine simplă
-            const border = parseInt(borderSize.value, 10);
-            if (border > 0) {
-                ctx.strokeStyle = borderColor.value;
-                ctx.lineWidth = border;
-                ctx.strokeRect(border, border, canvas.width - 2 * border, canvas.height - 2 * border);
-            }
-        }, 200);
-    }
+        // MARGINE
+        const border = parseInt(borderSize.value, 10);
+        if (border > 0) {
+            ctx.strokeStyle = borderColor.value;
+            ctx.lineWidth = border;
+            ctx.strokeRect(border, border, canvas.width - 2 * border, canvas.height - 2 * border);
+        }
+
+    }, 200);
 }
 
-// PNG
+
+// -------------------------
+// EXPORTURI
+// -------------------------
+
 downloadBtn.addEventListener("click", () => {
     const canvas = qrContainer.querySelector("canvas");
     if (!canvas) return;
@@ -162,7 +191,6 @@ downloadBtn.addEventListener("click", () => {
     link.click();
 });
 
-// PDF
 pdfBtn.addEventListener("click", () => {
     const canvas = qrContainer.querySelector("canvas");
     if (!canvas) return;
@@ -183,15 +211,15 @@ pdfBtn.addEventListener("click", () => {
     pdf.save("qr-code.pdf");
 });
 
-// SVG (folosind elementul intern)
 svgBtn.addEventListener("click", () => {
-    const svgEl = qrContainer.querySelector("svg");
-    if (!svgEl) {
-        alert("SVG nu este disponibil pentru această implementare.");
-        return;
-    }
-    const serializer = new XMLSerializer();
-    const svgData = serializer.serializeToString(svgEl);
+    const canvas = qrContainer.querySelector("canvas");
+    if (!canvas) return;
+
+    const svgData = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
+            <image href="${canvas.toDataURL("image/png")}" width="${canvas.width}" height="${canvas.height}" />
+        </svg>
+    `;
 
     const blob = new Blob([svgData], { type: "image/svg+xml" });
     const url = URL.createObjectURL(blob);
@@ -204,7 +232,11 @@ svgBtn.addEventListener("click", () => {
     URL.revokeObjectURL(url);
 });
 
-// Logo upload
+
+// -------------------------
+// LOGO
+// -------------------------
+
 logoInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -224,19 +256,17 @@ clearLogoBtn.addEventListener("click", () => {
     generateQR();
 });
 
-// Slidere și culori
+
+// -------------------------
+// EVENT LISTENERS
+// -------------------------
+
+inputContent.addEventListener("input", generateQR);
+inputQrColor.addEventListener("input", generateQR);
+inputBgColor.addEventListener("input", generateQR);
+
 inputSize.addEventListener("input", () => {
     updateSizeLabel();
-    generateQR();
-});
-
-inputQrColor.addEventListener("input", () => {
-    updateContrastStatus();
-    generateQR();
-});
-
-inputBgColor.addEventListener("input", () => {
-    updateContrastStatus();
     generateQR();
 });
 
@@ -252,17 +282,13 @@ logoOpacity.addEventListener("input", () => {
 
 logoPosition.addEventListener("change", generateQR);
 
-// Gradient simplu (doar setăm colorDark dacă e linear)
-gradientEnable.addEventListener("change", () => {
-    generateQR();
-});
-
+gradientEnable.addEventListener("change", generateQR);
 gradientColor1.addEventListener("input", generateQR);
 gradientColor2.addEventListener("input", generateQR);
+
 borderColor.addEventListener("input", generateQR);
 borderSize.addEventListener("input", generateQR);
 
-// Reset
 resetBtn.addEventListener("click", () => {
     inputContent.value = "https://exemplu.ro";
     inputQrColor.value = "#2b1b5f";
@@ -284,7 +310,11 @@ resetBtn.addEventListener("click", () => {
     generateQR();
 });
 
-// Inițializare
+
+// -------------------------
+// INITIALIZARE
+// -------------------------
+
 updateSizeLabel();
 updateLogoLabels();
 updateContrastStatus();
