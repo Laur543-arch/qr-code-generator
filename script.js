@@ -45,6 +45,11 @@ const batchStatus = document.getElementById("batch-status");
 // Template-uri premium
 const templateItems = document.querySelectorAll(".template-item");
 
+// Proiecte salvate
+const saveProjectBtn = document.getElementById("save-project");
+const loadProjectBtn = document.getElementById("load-project");
+const projectList = document.getElementById("project-list");
+
 // -------------------------
 // LIMBI (i18n)
 // -------------------------
@@ -92,7 +97,10 @@ const translations = {
         batchFileLabel: "Fișier Excel (XLSX)",
         batchColumnLabel: "Coloana cu text/URL",
         batchStart: "Generează QR-uri",
-        templateTitle: "Template-uri premium"
+        templateTitle: "Template-uri premium",
+        projectTitle: "Proiecte salvate",
+        saveProject: "Salvează proiect",
+        loadProject: "Încarcă proiect"
     },
     en: {
         appTitle: "Qrio – Premium QR Generator",
@@ -136,7 +144,10 @@ const translations = {
         batchFileLabel: "Excel file (XLSX)",
         batchColumnLabel: "Column with text/URL",
         batchStart: "Generate QR codes",
-        templateTitle: "Premium templates"
+        templateTitle: "Premium templates",
+        projectTitle: "Saved projects",
+        saveProject: "Save project",
+        loadProject: "Load project"
     }
 };
 
@@ -188,6 +199,10 @@ function applyTranslations() {
     batchStart.textContent = t.batchStart;
 
     configTitles[5].textContent = t.templateTitle;
+
+    configTitles[6].textContent = t.projectTitle;
+    saveProjectBtn.textContent = t.saveProject;
+    loadProjectBtn.textContent = t.loadProject;
 
     document.querySelector(".preview-header h2").textContent = t.previewTitle;
     downloadBtn.textContent = t.downloadPng;
@@ -619,6 +634,130 @@ templateItems.forEach(item => {
 });
 
 // -------------------------
+// PROIECTE SALVATE (LocalStorage)
+// -------------------------
+
+function getProjects() {
+    const raw = localStorage.getItem("qrio_projects");
+    if (!raw) return [];
+    try {
+        return JSON.parse(raw);
+    } catch {
+        return [];
+    }
+}
+
+function saveProjects(projects) {
+    localStorage.setItem("qrio_projects", JSON.stringify(projects));
+}
+
+function collectCurrentProject() {
+    const canvas = qrContainer.querySelector("canvas");
+
+    let logoData = null;
+    if (logoImage) {
+        // nu serializăm fișierul, doar marcăm că există logo
+        logoData = { hasLogo: true };
+    }
+
+    return {
+        id: `qr_${Date.now()}`,
+        name: inputContent.value.trim() || "(fără nume)",
+        content: inputContent.value.trim(),
+        qrColor: inputQrColor.value,
+        bgColor: inputBgColor.value,
+        size: parseInt(inputSize.value, 10),
+        gradient: {
+            type: gradientEnable.value,
+            color1: gradientColor1.value,
+            color2: gradientColor2.value
+        },
+        border: {
+            color: borderColor.value,
+            size: parseInt(borderSize.value, 10)
+        },
+        logo: {
+            scale: parseInt(logoScale.value, 10),
+            opacity: parseInt(logoOpacity.value, 10),
+            position: logoPosition.value,
+            meta: logoData
+        },
+        language: currentLang,
+        createdAt: new Date().toISOString()
+    };
+}
+
+function applyProject(project) {
+    inputContent.value = project.content || "";
+    inputQrColor.value = project.qrColor || "#000000";
+    inputBgColor.value = project.bgColor || "#ffffff";
+    inputSize.value = project.size || 400;
+
+    gradientEnable.value = project.gradient?.type || "none";
+    gradientColor1.value = project.gradient?.color1 || "#2b1b5f";
+    gradientColor2.value = project.gradient?.color2 || "#000000";
+
+    borderColor.value = project.border?.color || "#2b1b5f";
+    borderSize.value = project.border?.size ?? 2;
+
+    logoScale.value = project.logo?.scale ?? 22;
+    logoOpacity.value = project.logo?.opacity ?? 0;
+    logoPosition.value = project.logo?.position || "centru";
+
+    currentLang = project.language || currentLang;
+    applyTranslations();
+    updateSizeLabel();
+    updateLogoLabels();
+    generateQR();
+}
+
+function renderProjectList() {
+    const projects = getProjects();
+    projectList.innerHTML = "";
+
+    if (!projects.length) return;
+
+    projects.forEach(p => {
+        const li = document.createElement("li");
+        const span = document.createElement("span");
+        span.textContent = p.name;
+
+        const btn = document.createElement("button");
+        btn.textContent = "✕";
+        btn.className = "delete-project";
+        btn.addEventListener("click", () => {
+            const updated = projects.filter(x => x.id !== p.id);
+            saveProjects(updated);
+            renderProjectList();
+        });
+
+        li.addEventListener("click", (e) => {
+            if (e.target === btn) return;
+            applyProject(p);
+        });
+
+        li.appendChild(span);
+        li.appendChild(btn);
+        projectList.appendChild(li);
+    });
+}
+
+saveProjectBtn.addEventListener("click", () => {
+    if (!validateContent()) return;
+    const projects = getProjects();
+    const project = collectCurrentProject();
+    projects.unshift(project);
+    saveProjects(projects);
+    renderProjectList();
+});
+
+loadProjectBtn.addEventListener("click", () => {
+    const projects = getProjects();
+    if (!projects.length) return;
+    applyProject(projects[0]);
+});
+
+// -------------------------
 // LIMBĂ — BUTOANE & INITIALIZARE
 // -------------------------
 
@@ -633,3 +772,4 @@ updateSizeLabel();
 updateLogoLabels();
 inputContent.value = "https://exemplu.ro";
 generateQR();
+renderProjectList();
