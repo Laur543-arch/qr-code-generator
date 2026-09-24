@@ -458,4 +458,137 @@ gradientEnable.addEventListener("change", generateQR);
 gradientColor1.addEventListener("input", generateQR);
 gradientColor2.addEventListener("input", generateQR);
 
-borderColor.addEventListener("input", generate
+borderColor.addEventListener("input", generateQR);
+borderSize.addEventListener("input", generateQR);
+
+// -------------------------
+// BATCH QR — ACTIVARE BUTON
+// -------------------------
+
+batchInput.addEventListener("change", () => {
+    batchStart.disabled = !batchInput.files.length;
+});
+
+// -------------------------
+// BATCH QR — GENERARE
+// -------------------------
+
+batchStart.addEventListener("click", async () => {
+    const file = batchInput.files[0];
+    const column = batchColumn.value.trim().toUpperCase();
+
+    if (!file || !column) return;
+
+    batchProgress.classList.remove("hidden");
+    batchBar.style.width = "0%";
+    batchStatus.textContent = "0%";
+
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data);
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+    const colIndex = column.charCodeAt(0) - 65;
+    const zip = new JSZip();
+
+    let total = rows.length;
+    let processed = 0;
+
+    for (let i = 0; i < rows.length; i++) {
+        const value = rows[i][colIndex];
+        if (!value) continue;
+
+        // Creăm QR pe canvas temporar
+        const tempDiv = document.createElement("div");
+        new QRCode(tempDiv, {
+            text: value.toString(),
+            width: parseInt(inputSize.value),
+            height: parseInt(inputSize.value),
+            colorDark: inputQrColor.value,
+            colorLight: inputBgColor.value,
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        await new Promise(res => setTimeout(res, 50));
+
+        const canvas = tempDiv.querySelector("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Gradient
+        if (gradientEnable.value === "linear") {
+            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            grad.addColorStop(0, gradientColor1.value);
+            grad.addColorStop(1, gradientColor2.value);
+
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            ctx.putImageData(imgData, 0, 0);
+
+            ctx.globalCompositeOperation = "source-in";
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.globalCompositeOperation = "source-over";
+        }
+
+        // Logo
+        if (logoImage) {
+            const logoSize = (logoScale.value / 100) * canvas.width;
+            const opacity = 1 - logoOpacity.value / 100;
+
+            let x = (canvas.width - logoSize) / 2;
+            let y = (canvas.height - logoSize) / 2;
+
+            if (logoPosition.value === "top") y = canvas.height * 0.15 - logoSize / 2;
+            if (logoPosition.value === "bottom") y = canvas.height * 0.85 - logoSize / 2;
+            if (logoPosition.value === "left") x = canvas.width * 0.15 - logoSize / 2;
+            if (logoPosition.value === "right") x = canvas.width * 0.85 - logoSize / 2;
+
+            ctx.save();
+            ctx.globalAlpha = opacity;
+            ctx.drawImage(logoImage, x, y, logoSize, logoSize);
+            ctx.restore();
+        }
+
+        // Border
+        const border = parseInt(borderSize.value, 10);
+        if (border > 0) {
+            ctx.strokeStyle = borderColor.value;
+            ctx.lineWidth = border;
+            ctx.strokeRect(border, border, canvas.width - 2 * border, canvas.height - 2 * border);
+        }
+
+        // Salvăm PNG în ZIP
+        const pngData = canvas.toDataURL("image/png").split(",")[1];
+        zip.file(`qr_${i + 1}.png`, pngData, { base64: true });
+
+        processed++;
+        const percent = Math.round((processed / total) * 100);
+        batchBar.style.width = percent + "%";
+        batchStatus.textContent = percent + "%";
+    }
+
+    // Export ZIP
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(zipBlob);
+    link.download = "batch-qr.zip";
+    link.click();
+
+    batchStatus.textContent = "100%";
+});
+
+// -------------------------
+// LIMBĂ — BUTOANE & INITIALIZARE
+// -------------------------
+
+document.querySelectorAll(".lang-button").forEach(btn => {
+    btn.addEventListener("click", () => {
+        setLang(btn.dataset.lang);
+    });
+});
+
+setLang("auto");
+updateSizeLabel();
+updateLogoLabels();
+inputContent.value = "https://exemplu.ro";
+generateQR();
+
