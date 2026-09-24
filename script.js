@@ -34,6 +34,13 @@ const svgBtn = document.getElementById("svg-btn");
 
 const qrContainer = document.getElementById("qrcode");
 
+// Batch QR
+const batchInput = document.getElementById("batch-input");
+const batchColumn = document.getElementById("batch-column");
+const batchStart = document.getElementById("batch-start");
+const batchProgress = document.getElementById("batch-progress");
+const batchBar = document.getElementById("batch-bar");
+const batchStatus = document.getElementById("batch-status");
 
 // -------------------------
 // LIMBI (i18n)
@@ -77,7 +84,11 @@ const translations = {
         downloadPdf: "Descarcă PDF",
         downloadSvg: "Descarcă SVG",
         footerText: "Qrio · Generator QR Premium",
-        resetText: "Reset"
+        resetText: "Reset",
+        batchTitle: "Batch QR",
+        batchFileLabel: "Fișier Excel (XLSX)",
+        batchColumnLabel: "Coloana cu text/URL",
+        batchStart: "Generează QR-uri"
     },
     en: {
         appTitle: "Qrio – Premium QR Generator",
@@ -116,7 +127,11 @@ const translations = {
         downloadPdf: "Download PDF",
         downloadSvg: "Download SVG",
         footerText: "Qrio · Premium QR Generator",
-        resetText: "Reset"
+        resetText: "Reset",
+        batchTitle: "Batch QR",
+        batchFileLabel: "Excel file (XLSX)",
+        batchColumnLabel: "Column with text/URL",
+        batchStart: "Generate QR codes"
     }
 };
 
@@ -162,6 +177,11 @@ function applyTranslations() {
     document.querySelector("label[for='border-color']").textContent = t.borderColorLabel;
     document.querySelector("label[for='border-size']").textContent = t.borderSizeLabel;
 
+    configTitles[4].textContent = t.batchTitle;
+    document.querySelector("label[for='batch-input']").textContent = t.batchFileLabel;
+    document.querySelector("label[for='batch-column']").textContent = t.batchColumnLabel;
+    batchStart.textContent = t.batchStart;
+
     document.querySelector(".preview-header h2").textContent = t.previewTitle;
     downloadBtn.textContent = t.downloadPng;
     pdfBtn.textContent = t.downloadPdf;
@@ -185,7 +205,6 @@ function setLang(lang) {
         if (lang === "auto" && btn.dataset.lang === "auto") btn.classList.add("active");
     });
 }
-
 
 // -------------------------
 // UTILITARE
@@ -252,9 +271,8 @@ function validateContent() {
     return true;
 }
 
-
 // -------------------------
-// GENERARE QR
+// GENERARE QR INDIVIDUAL
 // -------------------------
 
 function generateQR() {
@@ -327,9 +345,8 @@ function generateQR() {
     }, 200);
 }
 
-
 // -------------------------
-// EXPORTURI
+// EXPORTURI INDIVIDUALE
 // -------------------------
 
 downloadBtn.addEventListener("click", () => {
@@ -383,7 +400,6 @@ svgBtn.addEventListener("click", () => {
     URL.revokeObjectURL(url);
 });
 
-
 // -------------------------
 // LOGO
 // -------------------------
@@ -407,9 +423,8 @@ clearLogoBtn.addEventListener("click", () => {
     generateQR();
 });
 
-
 // -------------------------
-// EVENT LISTENERS
+// EVENT LISTENERS INDIVIDUAL
 // -------------------------
 
 inputContent.addEventListener("input", generateQR);
@@ -443,43 +458,4 @@ gradientEnable.addEventListener("change", generateQR);
 gradientColor1.addEventListener("input", generateQR);
 gradientColor2.addEventListener("input", generateQR);
 
-borderColor.addEventListener("input", generateQR);
-borderSize.addEventListener("input", generateQR);
-
-resetBtn.addEventListener("click", () => {
-    inputContent.value = "https://exemplu.ro";
-    inputQrColor.value = "#2b1b5f";
-    inputBgColor.value = "#ffffff";
-    inputSize.value = 400;
-    logoScale.value = 22;
-    logoOpacity.value = 0;
-    logoPosition.value = "centru";
-    gradientEnable.value = "none";
-    gradientColor1.value = "#2b1b5f";
-    gradientColor2.value = "#000000";
-    borderColor.value = "#2b1b5f";
-    borderSize.value = 2;
-    logoImage = null;
-    logoInput.value = "";
-    updateSizeLabel();
-    updateLogoLabels();
-    updateContrastStatus();
-    generateQR();
-});
-
-
-// -------------------------
-// LIMBĂ – BUTOANE & INITIALIZARE
-// -------------------------
-
-document.querySelectorAll(".lang-button").forEach(btn => {
-    btn.addEventListener("click", () => {
-        setLang(btn.dataset.lang);
-    });
-});
-
-setLang("auto");
-updateSizeLabel();
-updateLogoLabels();
-inputContent.value = "https://exemplu.ro";
-generateQR();
+borderColor.addEventListener("input", generate
