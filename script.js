@@ -1,3 +1,58 @@
+/* ============================
+   SISTEM DE LIMBI (i18n)
+   ============================ */
+
+let currentLang = "ro";
+let translations = {};
+
+/* Încarcă fișierul lang.json */
+async function loadTranslations() {
+  try {
+    const response = await fetch("lang.json");
+    translations = await response.json();
+  } catch (error) {
+    console.error("Eroare la încărcarea traducerilor:", error);
+  }
+}
+
+/* Aplică traducerile în HTML */
+function applyTranslations() {
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    if (translations[currentLang] && translations[currentLang][key]) {
+      el.textContent = translations[currentLang][key];
+    }
+  });
+}
+
+/* Detectare automată limbă */
+function detectLanguage() {
+  const saved = localStorage.getItem("app_lang");
+  if (saved) {
+    currentLang = saved;
+    return;
+  }
+
+  const browserLang = navigator.language || navigator.userLanguage;
+
+  if (browserLang.startsWith("ro")) {
+    currentLang = "ro";
+  } else {
+    currentLang = "en";
+  }
+}
+
+/* Schimbare limbă manual */
+function switchLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem("app_lang", lang);
+  applyTranslations();
+}
+
+/* ============================
+   GENERARE QR + LOGO
+   ============================ */
+
 let qrInstance = null;
 
 const input = document.getElementById('qr-input');
@@ -66,7 +121,7 @@ generateBtn.addEventListener('click', () => {
   const size = parseInt(sizeInput.value, 10);
 
   if (!value) {
-    alert('Introdu un text sau un URL.');
+    alert(currentLang === "ro" ? "Introdu un text sau un URL." : "Enter a text or URL.");
     return;
   }
 
@@ -109,5 +164,21 @@ clearLogoBtn.addEventListener('click', () => {
 
 /* PDF – premium */
 pdfBtn.addEventListener('click', () => {
-  alert("Funcția PDF va fi disponibilă în versiunea premium.");
+  alert(currentLang === "ro" ? "Funcția PDF va fi disponibilă în versiunea premium." : "PDF export will be available in the premium version.");
+});
+
+/* ============================
+   INITIALIZARE
+   ============================ */
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadTranslations();
+  detectLanguage();
+  applyTranslations();
+
+  document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      switchLanguage(btn.dataset.lang);
+    });
+  });
 });
