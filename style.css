@@ -2,6 +2,10 @@
    RESET & BASE
    ============================ */
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: "Segoe UI", sans-serif;
@@ -28,6 +32,7 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .brand {
@@ -99,7 +104,7 @@ h1, h2, h3 {
    ============================ */
 
 .app-main {
-  max-width: 900px;
+  max-width: 960px;
   margin: 30px auto;
   padding: 0 20px;
 }
@@ -111,6 +116,10 @@ h1, h2, h3 {
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
+
+/* ============================
+   FORM GRID
+   ============================ */
 
 .form-grid {
   display: grid;
@@ -144,6 +153,13 @@ input[type="color"] {
 /* ============================
    BUTTONS
    ============================ */
+
+.actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
 
 .btn {
   padding: 10px 16px;
@@ -193,8 +209,12 @@ input[type="color"] {
    QR CONTAINER
    ============================ */
 
-.qr-container {
+.qr-wrapper {
   margin-top: 20px;
+}
+
+.qr-container {
+  margin-top: 10px;
   display: flex;
   justify-content: center;
 }
@@ -219,6 +239,71 @@ input[type="color"] {
   text-align: center;
   padding: 20px;
   color: #666;
+}
+
+/* ============================
+   RESPONSIVE LAYOUT
+   ============================ */
+
+/* Mobil mic (sub ~480px) */
+@media (max-width: 480px) {
+  .app-main {
+    margin: 20px auto;
+    padding: 0 12px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .brand-name {
+    font-size: 16px;
+  }
+
+  .lang-switch {
+    margin-top: 8px;
+  }
+
+  .darkmode-btn {
+    align-self: flex-start;
+  }
+
+  .actions-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Tablet (~481–768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .app-main {
+    max-width: 720px;
+  }
+
+  .header-inner {
+    gap: 16px;
+  }
+}
+
+/* Desktop mare (peste ~1200px) */
+@media (min-width: 1200px) {
+  .app-main {
+    max-width: 1100px;
+  }
+
+  .card-main {
+    padding: 24px;
+  }
 }
 
 /* ============================
