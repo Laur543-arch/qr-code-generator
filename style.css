@@ -299,3 +299,78 @@ input[type="color"] {
     margin-top: 6px;
   }
 }
+
+/* ============================
+   DARK MODE
+   ============================ */
+
+body.dark {
+  background: #1e1e1e;
+  color: #e6e6e6;
+}
+
+body.dark .app-header {
+  background: #2c2c2c;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+body.dark .card {
+  background: #2a2a2a;
+  color: #e6e6e6;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+body.dark input[type="text"],
+body.dark input[type="number"],
+body.dark input[type="file"] {
+  background: #3a3a3a;
+  color: #ffffff;
+  border: 1px solid #555555;
+}
+
+body.dark input[type="color"] {
+  background: #3a3a3a;
+}
+
+body.dark .btn-primary {
+  background: #005ea6;
+  color: #ffffff;
+}
+
+body.dark .btn-outline {
+  background: transparent;
+  color: #66b0ff;
+  border-color: #66b0ff;
+}
+
+body.dark .btn-secondary {
+  background: #3a3a3a;
+  color: #e6e6e6;
+  border-color: #555555;
+}
+
+body.dark .btn-disabled {
+  background: #444444;
+  color: #999999;
+}
+
+body.dark .qr-container {
+  background: #2a2a2a;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+body.dark .lang-btn {
+  background: #3a3a3a;
+  border-color: #66b0ff;
+  color: #66b0ff;
+}
+
+body.dark .lang-btn.active {
+  background: #66b0ff;
+  color: #1e1e1e;
+}
+
+body.dark .app-footer {
+  color: #bbbbbb;
+}
