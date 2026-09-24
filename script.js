@@ -42,6 +42,9 @@ const batchProgress = document.getElementById("batch-progress");
 const batchBar = document.getElementById("batch-bar");
 const batchStatus = document.getElementById("batch-status");
 
+// Template-uri premium
+const templateItems = document.querySelectorAll(".template-item");
+
 // -------------------------
 // LIMBI (i18n)
 // -------------------------
@@ -88,7 +91,8 @@ const translations = {
         batchTitle: "Batch QR",
         batchFileLabel: "Fișier Excel (XLSX)",
         batchColumnLabel: "Coloana cu text/URL",
-        batchStart: "Generează QR-uri"
+        batchStart: "Generează QR-uri",
+        templateTitle: "Template-uri premium"
     },
     en: {
         appTitle: "Qrio – Premium QR Generator",
@@ -131,7 +135,8 @@ const translations = {
         batchTitle: "Batch QR",
         batchFileLabel: "Excel file (XLSX)",
         batchColumnLabel: "Column with text/URL",
-        batchStart: "Generate QR codes"
+        batchStart: "Generate QR codes",
+        templateTitle: "Premium templates"
     }
 };
 
@@ -181,6 +186,8 @@ function applyTranslations() {
     document.querySelector("label[for='batch-input']").textContent = t.batchFileLabel;
     document.querySelector("label[for='batch-column']").textContent = t.batchColumnLabel;
     batchStart.textContent = t.batchStart;
+
+    configTitles[5].textContent = t.templateTitle;
 
     document.querySelector(".preview-header h2").textContent = t.previewTitle;
     downloadBtn.textContent = t.downloadPng;
@@ -275,6 +282,49 @@ function validateContent() {
 // GENERARE QR INDIVIDUAL
 // -------------------------
 
+function drawAdvancedOnCanvas(canvas) {
+    const ctx = canvas.getContext("2d");
+
+    if (gradientEnable.value === "linear") {
+        const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        grad.addColorStop(0, gradientColor1.value);
+        grad.addColorStop(1, gradientColor2.value);
+
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        ctx.putImageData(imgData, 0, 0);
+
+        ctx.globalCompositeOperation = "source-in";
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = "source-over";
+    }
+
+    if (logoImage) {
+        const logoSize = (logoScale.value / 100) * canvas.width;
+        const opacity = 1 - logoOpacity.value / 100;
+
+        let x = (canvas.width - logoSize) / 2;
+        let y = (canvas.height - logoSize) / 2;
+
+        if (logoPosition.value === "top") y = canvas.height * 0.15 - logoSize / 2;
+        if (logoPosition.value === "bottom") y = canvas.height * 0.85 - logoSize / 2;
+        if (logoPosition.value === "left") x = canvas.width * 0.15 - logoSize / 2;
+        if (logoPosition.value === "right") x = canvas.width * 0.85 - logoSize / 2;
+
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        ctx.drawImage(logoImage, x, y, logoSize, logoSize);
+        ctx.restore();
+    }
+
+    const border = parseInt(borderSize.value, 10);
+    if (border > 0) {
+        ctx.strokeStyle = borderColor.value;
+        ctx.lineWidth = border;
+        ctx.strokeRect(border, border, canvas.width - 2 * border, canvas.height - 2 * border);
+    }
+}
+
 function generateQR() {
     if (!validateContent()) return;
 
@@ -300,48 +350,7 @@ function generateQR() {
     setTimeout(() => {
         const canvas = qrContainer.querySelector("canvas");
         if (!canvas) return;
-
-        const ctx = canvas.getContext("2d");
-
-        if (gradientEnable.value === "linear") {
-            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            grad.addColorStop(0, gradientColor1.value);
-            grad.addColorStop(1, gradientColor2.value);
-
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            ctx.putImageData(imgData, 0, 0);
-
-            ctx.globalCompositeOperation = "source-in";
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.globalCompositeOperation = "source-over";
-        }
-
-        if (logoImage) {
-            const logoSize = (logoScale.value / 100) * canvas.width;
-            const opacity = 1 - logoOpacity.value / 100;
-
-            let x = (canvas.width - logoSize) / 2;
-            let y = (canvas.height - logoSize) / 2;
-
-            if (logoPosition.value === "top") y = canvas.height * 0.15 - logoSize / 2;
-            if (logoPosition.value === "bottom") y = canvas.height * 0.85 - logoSize / 2;
-            if (logoPosition.value === "left") x = canvas.width * 0.15 - logoSize / 2;
-            if (logoPosition.value === "right") x = canvas.width * 0.85 - logoSize / 2;
-
-            ctx.save();
-            ctx.globalAlpha = opacity;
-            ctx.drawImage(logoImage, x, y, logoSize, logoSize);
-            ctx.restore();
-        }
-
-        const border = parseInt(borderSize.value, 10);
-        if (border > 0) {
-            ctx.strokeStyle = borderColor.value;
-            ctx.lineWidth = border;
-            ctx.strokeRect(border, border, canvas.width - 2 * border, canvas.height - 2 * border);
-        }
-
+        drawAdvancedOnCanvas(canvas);
     }, 200);
 }
 
@@ -498,7 +507,6 @@ batchStart.addEventListener("click", async () => {
         const value = rows[i][colIndex];
         if (!value) continue;
 
-        // Creăm QR pe canvas temporar
         const tempDiv = document.createElement("div");
         new QRCode(tempDiv, {
             text: value.toString(),
@@ -512,51 +520,10 @@ batchStart.addEventListener("click", async () => {
         await new Promise(res => setTimeout(res, 50));
 
         const canvas = tempDiv.querySelector("canvas");
-        const ctx = canvas.getContext("2d");
+        if (!canvas) continue;
 
-        // Gradient
-        if (gradientEnable.value === "linear") {
-            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            grad.addColorStop(0, gradientColor1.value);
-            grad.addColorStop(1, gradientColor2.value);
+        drawAdvancedOnCanvas(canvas);
 
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            ctx.putImageData(imgData, 0, 0);
-
-            ctx.globalCompositeOperation = "source-in";
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.globalCompositeOperation = "source-over";
-        }
-
-        // Logo
-        if (logoImage) {
-            const logoSize = (logoScale.value / 100) * canvas.width;
-            const opacity = 1 - logoOpacity.value / 100;
-
-            let x = (canvas.width - logoSize) / 2;
-            let y = (canvas.height - logoSize) / 2;
-
-            if (logoPosition.value === "top") y = canvas.height * 0.15 - logoSize / 2;
-            if (logoPosition.value === "bottom") y = canvas.height * 0.85 - logoSize / 2;
-            if (logoPosition.value === "left") x = canvas.width * 0.15 - logoSize / 2;
-            if (logoPosition.value === "right") x = canvas.width * 0.85 - logoSize / 2;
-
-            ctx.save();
-            ctx.globalAlpha = opacity;
-            ctx.drawImage(logoImage, x, y, logoSize, logoSize);
-            ctx.restore();
-        }
-
-        // Border
-        const border = parseInt(borderSize.value, 10);
-        if (border > 0) {
-            ctx.strokeStyle = borderColor.value;
-            ctx.lineWidth = border;
-            ctx.strokeRect(border, border, canvas.width - 2 * border, canvas.height - 2 * border);
-        }
-
-        // Salvăm PNG în ZIP
         const pngData = canvas.toDataURL("image/png").split(",")[1];
         zip.file(`qr_${i + 1}.png`, pngData, { base64: true });
 
@@ -566,7 +533,6 @@ batchStart.addEventListener("click", async () => {
         batchStatus.textContent = percent + "%";
     }
 
-    // Export ZIP
     const zipBlob = await zip.generateAsync({ type: "blob" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(zipBlob);
@@ -574,6 +540,82 @@ batchStart.addEventListener("click", async () => {
     link.click();
 
     batchStatus.textContent = "100%";
+});
+
+// -------------------------
+// TEMPLATE-URI PREMIUM
+// -------------------------
+
+const templates = {
+    corporate: () => {
+        inputQrColor.value = "#1A4C8B";
+        inputBgColor.value = "#FFFFFF";
+        gradientEnable.value = "none";
+        borderColor.value = "#1A4C8B";
+        borderSize.value = 4;
+        logoPosition.value = "centru";
+        updateContrastStatus();
+        generateQR();
+    },
+    luxury: () => {
+        inputQrColor.value = "#C59D2F";
+        inputBgColor.value = "#FFFFFF";
+        gradientEnable.value = "linear";
+        gradientColor1.value = "#C59D2F";
+        gradientColor2.value = "#8C6A1F";
+        borderColor.value = "#C59D2F";
+        borderSize.value = 3;
+        logoOpacity.value = 10;
+        logoPosition.value = "centru";
+        updateLogoLabels();
+        updateContrastStatus();
+        generateQR();
+    },
+    modern: () => {
+        inputQrColor.value = "#6B2FB3";
+        inputBgColor.value = "#F7F2FF";
+        gradientEnable.value = "linear";
+        gradientColor1.value = "#6B2FB3";
+        gradientColor2.value = "#B38CFF";
+        borderSize.value = 0;
+        logoPosition.value = "right";
+        updateContrastStatus();
+        generateQR();
+    },
+    minimal: () => {
+        inputQrColor.value = "#000000";
+        inputBgColor.value = "#FFFFFF";
+        gradientEnable.value = "none";
+        borderSize.value = 0;
+        logoImage = null;
+        logoInput.value = "";
+        updateContrastStatus();
+        generateQR();
+    },
+    neon: () => {
+        inputQrColor.value = "#00FFAA";
+        inputBgColor.value = "#000000";
+        gradientEnable.value = "linear";
+        gradientColor1.value = "#00FFAA";
+        gradientColor2.value = "#00CC88";
+        borderColor.value = "#00FFAA";
+        borderSize.value = 2;
+        logoPosition.value = "centru";
+        updateContrastStatus();
+        generateQR();
+    }
+};
+
+templateItems.forEach(item => {
+    item.addEventListener("click", () => {
+        templateItems.forEach(i => i.classList.remove("active"));
+        item.classList.add("active");
+
+        const key = item.dataset.template;
+        if (templates[key]) {
+            templates[key]();
+        }
+    });
 });
 
 // -------------------------
@@ -591,4 +633,3 @@ updateSizeLabel();
 updateLogoLabels();
 inputContent.value = "https://exemplu.ro";
 generateQR();
-
