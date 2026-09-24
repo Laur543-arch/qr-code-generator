@@ -36,6 +36,158 @@ const qrContainer = document.getElementById("qrcode");
 
 
 // -------------------------
+// LIMBI (i18n)
+// -------------------------
+
+const translations = {
+    ro: {
+        appTitle: "Qrio – Generator QR Premium",
+        headerTitle: "Qrio",
+        headerSubtitle: "Configurează, verifică și descarcă în câteva secunde.",
+        contentTitle: "Conținut",
+        contentLabel: "URL sau text",
+        contentValid: "Conținut valid",
+        contentEmpty: "Conținut gol",
+        aspectTitle: "Aspect",
+        qrColorLabel: "Culoare QR",
+        bgColorLabel: "Culoare fundal",
+        sizeLabel: "Dimensiune",
+        contrastGood: "Contrast bun, ușor de scanare",
+        contrastMedium: "Contrast mediu, verifică înainte de tipărire",
+        contrastBad: "Contrast slab, risc de scanare dificilă",
+        scanGood: "Scanabil, contrast bun",
+        scanMedium: "Scanabil, dar nu ideal",
+        scanBad: "Risc de scanare dificilă",
+        logoTitle: "Logo",
+        logoFileLabel: "Fișier logo (PNG/JPG)",
+        logoClear: "Șterge logo",
+        logoSizeLabel: "Dimensiune logo",
+        logoOpacityLabel: "Transparență logo",
+        logoPositionLabel: "Poziție logo",
+        effectsTitle: "Efecte avansate",
+        gradientLabel: "Gradient QR",
+        gradientNone: "Fără",
+        gradientLinear: "Linear",
+        color1Label: "Culoare 1",
+        color2Label: "Culoare 2",
+        borderColorLabel: "Culoare margine",
+        borderSizeLabel: "Grosime margine",
+        previewTitle: "Previzualizare",
+        downloadPng: "Descarcă PNG",
+        downloadPdf: "Descarcă PDF",
+        downloadSvg: "Descarcă SVG",
+        footerText: "Qrio · Generator QR Premium",
+        resetText: "Reset"
+    },
+    en: {
+        appTitle: "Qrio – Premium QR Generator",
+        headerTitle: "Qrio",
+        headerSubtitle: "Configure, verify and download in seconds.",
+        contentTitle: "Content",
+        contentLabel: "URL or text",
+        contentValid: "Valid content",
+        contentEmpty: "Empty content",
+        aspectTitle: "Appearance",
+        qrColorLabel: "QR color",
+        bgColorLabel: "Background color",
+        sizeLabel: "Size",
+        contrastGood: "Good contrast, easy to scan",
+        contrastMedium: "Medium contrast, test before printing",
+        contrastBad: "Low contrast, scanning may be difficult",
+        scanGood: "Scannable, good contrast",
+        scanMedium: "Scannable, but not ideal",
+        scanBad: "Risk of difficult scanning",
+        logoTitle: "Logo",
+        logoFileLabel: "Logo file (PNG/JPG)",
+        logoClear: "Clear logo",
+        logoSizeLabel: "Logo size",
+        logoOpacityLabel: "Logo transparency",
+        logoPositionLabel: "Logo position",
+        effectsTitle: "Advanced effects",
+        gradientLabel: "QR gradient",
+        gradientNone: "None",
+        gradientLinear: "Linear",
+        color1Label: "Color 1",
+        color2Label: "Color 2",
+        borderColorLabel: "Border color",
+        borderSizeLabel: "Border thickness",
+        previewTitle: "Preview",
+        downloadPng: "Download PNG",
+        downloadPdf: "Download PDF",
+        downloadSvg: "Download SVG",
+        footerText: "Qrio · Premium QR Generator",
+        resetText: "Reset"
+    }
+};
+
+let currentLang = "ro";
+
+function detectBrowserLang() {
+    const lang = navigator.language || navigator.userLanguage || "en";
+    if (lang.startsWith("ro")) return "ro";
+    return "en";
+}
+
+function applyTranslations() {
+    const t = translations[currentLang];
+
+    document.title = t.appTitle;
+
+    document.querySelector(".brand-text h1").textContent = t.headerTitle;
+    document.querySelector(".header-subtitle").textContent = t.headerSubtitle;
+
+    const configTitles = document.querySelectorAll(".config-card h2");
+    configTitles[0].textContent = t.contentTitle;
+    document.querySelector("label[for='qr-input']").textContent = t.contentLabel;
+    resetBtn.textContent = t.resetText;
+
+    configTitles[1].textContent = t.aspectTitle;
+    document.querySelector("label[for='qr-color']").textContent = t.qrColorLabel;
+    document.querySelector("label[for='bg-color']").textContent = t.bgColorLabel;
+    document.querySelector("label[for='qr-size']").textContent = t.sizeLabel;
+
+    configTitles[2].textContent = t.logoTitle;
+    document.querySelector("label[for='logo-input']").textContent = t.logoFileLabel;
+    clearLogoBtn.textContent = t.logoClear;
+    document.querySelector("label[for='logo-scale']").textContent = t.logoSizeLabel;
+    document.querySelector("label[for='logo-opacity']").textContent = t.logoOpacityLabel;
+    document.querySelector("label[for='logo-position']").textContent = t.logoPositionLabel;
+
+    configTitles[3].textContent = t.effectsTitle;
+    document.querySelector("label[for='gradient-enable']").textContent = t.gradientLabel;
+    document.querySelector("#gradient-enable option[value='none']").textContent = t.gradientNone;
+    document.querySelector("#gradient-enable option[value='linear']").textContent = t.gradientLinear;
+    document.querySelector("label[for='gradient-color1']").textContent = t.color1Label;
+    document.querySelector("label[for='gradient-color2']").textContent = t.color2Label;
+    document.querySelector("label[for='border-color']").textContent = t.borderColorLabel;
+    document.querySelector("label[for='border-size']").textContent = t.borderSizeLabel;
+
+    document.querySelector(".preview-header h2").textContent = t.previewTitle;
+    downloadBtn.textContent = t.downloadPng;
+    pdfBtn.textContent = t.downloadPdf;
+    svgBtn.textContent = t.downloadSvg;
+
+    document.querySelector(".app-footer span").textContent = t.footerText;
+
+    updateContrastStatus();
+}
+
+function setLang(lang) {
+    if (lang === "auto") {
+        currentLang = detectBrowserLang();
+    } else {
+        currentLang = lang;
+    }
+    applyTranslations();
+
+    document.querySelectorAll(".lang-button").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.lang === lang);
+        if (lang === "auto" && btn.dataset.lang === "auto") btn.classList.add("active");
+    });
+}
+
+
+// -------------------------
 // UTILITARE
 // -------------------------
 
@@ -57,20 +209,22 @@ function updateContrastStatus() {
     const L2 = getLuminance(bg);
     const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
 
+    const t = translations[currentLang];
+
     if (ratio >= 4.5) {
-        contrastStatus.textContent = "Contrast bun, ușor de scanare";
+        contrastStatus.textContent = t.contrastGood;
         contrastStatus.className = "status-pill status-ok";
-        scanStatus.textContent = "Scanabil, contrast bun";
+        scanStatus.textContent = t.scanGood;
         scanStatus.className = "status-pill status-ok";
     } else if (ratio >= 2.5) {
-        contrastStatus.textContent = "Contrast mediu, verifică înainte de tipărire";
+        contrastStatus.textContent = t.contrastMedium;
         contrastStatus.className = "status-pill status-warn";
-        scanStatus.textContent = "Scanabil, dar nu ideal";
+        scanStatus.textContent = t.scanMedium;
         scanStatus.className = "status-pill status-warn";
     } else {
-        contrastStatus.textContent = "Contrast slab, risc de scanare dificilă";
+        contrastStatus.textContent = t.contrastBad;
         contrastStatus.className = "status-pill status-bad";
-        scanStatus.textContent = "Risc de scanare dificilă";
+        scanStatus.textContent = t.scanBad;
         scanStatus.className = "status-pill status-bad";
     }
 }
@@ -86,12 +240,14 @@ function updateLogoLabels() {
 
 function validateContent() {
     const value = inputContent.value.trim();
+    const t = translations[currentLang];
+
     if (!value) {
-        contentStatus.textContent = "Conținut gol";
+        contentStatus.textContent = t.contentEmpty;
         contentStatus.className = "status-pill status-bad";
         return false;
     }
-    contentStatus.textContent = "Conținut valid";
+    contentStatus.textContent = t.contentValid;
     contentStatus.className = "status-pill status-ok";
     return true;
 }
@@ -108,7 +264,6 @@ function generateQR() {
 
     const size = parseInt(inputSize.value, 10);
 
-    // Generăm QR-ul pe canvas
     new QRCode(qrContainer, {
         text: inputContent.value.trim(),
         width: size,
@@ -124,14 +279,12 @@ function generateQR() {
     pdfBtn.disabled = false;
     svgBtn.disabled = false;
 
-    // Așteptăm canvas-ul
     setTimeout(() => {
         const canvas = qrContainer.querySelector("canvas");
         if (!canvas) return;
 
         const ctx = canvas.getContext("2d");
 
-        // GRADIENT
         if (gradientEnable.value === "linear") {
             const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
             grad.addColorStop(0, gradientColor1.value);
@@ -146,7 +299,6 @@ function generateQR() {
             ctx.globalCompositeOperation = "source-over";
         }
 
-        // LOGO
         if (logoImage) {
             const logoSize = (logoScale.value / 100) * canvas.width;
             const opacity = 1 - logoOpacity.value / 100;
@@ -165,7 +317,6 @@ function generateQR() {
             ctx.restore();
         }
 
-        // MARGINE
         const border = parseInt(borderSize.value, 10);
         if (border > 0) {
             ctx.strokeStyle = borderColor.value;
@@ -262,8 +413,14 @@ clearLogoBtn.addEventListener("click", () => {
 // -------------------------
 
 inputContent.addEventListener("input", generateQR);
-inputQrColor.addEventListener("input", generateQR);
-inputBgColor.addEventListener("input", generateQR);
+inputQrColor.addEventListener("input", () => {
+    updateContrastStatus();
+    generateQR();
+});
+inputBgColor.addEventListener("input", () => {
+    updateContrastStatus();
+    generateQR();
+});
 
 inputSize.addEventListener("input", () => {
     updateSizeLabel();
@@ -312,11 +469,17 @@ resetBtn.addEventListener("click", () => {
 
 
 // -------------------------
-// INITIALIZARE
+// LIMBĂ – BUTOANE & INITIALIZARE
 // -------------------------
 
+document.querySelectorAll(".lang-button").forEach(btn => {
+    btn.addEventListener("click", () => {
+        setLang(btn.dataset.lang);
+    });
+});
+
+setLang("auto");
 updateSizeLabel();
 updateLogoLabels();
-updateContrastStatus();
 inputContent.value = "https://exemplu.ro";
 generateQR();
