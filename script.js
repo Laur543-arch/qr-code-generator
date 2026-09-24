@@ -25,40 +25,22 @@ const gradientColor2Input = document.getElementById('gradient-color2');
 const borderSizeInput = document.getElementById('border-size');
 const borderColorInput = document.getElementById('border-color');
 
-/* LIMBA (dacă ai sistem de traduceri) */
+/* LIMBA */
 let currentLang = "ro";
 
-/* GENERARE QR + PREMIUM ÎN PREVIEW */
-generateBtn.addEventListener('click', () => {
-    const value = input.value.trim();
+/* Funcția principală — LIVE UPDATE */
+function regenerateQR() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    const size = parseInt(sizeInput.value, 10);
     const colorDark = qrColorInput.value;
     const colorLight = bgColorInput.value;
-    const size = parseInt(sizeInput.value, 10);
-
-    if (!value) {
-        alert(currentLang === "ro" ? "Introdu un text sau un URL." : "Enter a text or URL.");
-        return;
-    }
-
     const logoFile = logoInput.files ? logoInput.files[0] : null;
 
-    generateCustomQR(value, size, colorDark, colorLight, logoFile);
-
-    downloadBtn.disabled = false;
-    pdfBtn.disabled = false;
-});
-
-/* ȘTERGE LOGO */
-clearLogoBtn.addEventListener('click', () => {
-    logoInput.value = "";
-    generateBtn.click();
-});
-
-/* Funcție care generează QR într-un canvas propriu, cu Premium */
-function generateCustomQR(text, size, colorDark, colorLight, logoFile) {
     qrContainer.innerHTML = "";
 
-    // 1. Generăm QR-ul într-un div temporar
+    /* 1. Generăm QR-ul într-un div temporar */
     const tempDiv = document.createElement("div");
 
     const qr = new QRCode(tempDiv, {
@@ -70,19 +52,19 @@ function generateCustomQR(text, size, colorDark, colorLight, logoFile) {
         correctLevel: QRCode.CorrectLevel.H
     });
 
-    // 2. Așteptăm ca QR-ul să fie generat
-    setTimeout(() => {
+    /* 2. Callback real — QR gata */
+    qr._oDrawing._elImage.onload = () => {
         const img = tempDiv.querySelector("img") || tempDiv.querySelector("canvas");
         if (!img) return;
 
-        // 3. Creăm canvas-ul final
+        /* 3. Canvas final */
         const canvas = document.createElement("canvas");
         canvas.width = size;
         canvas.height = size;
         const ctx = canvas.getContext("2d");
 
-        /* PREMIUM: GRADIENT / FUNDAL */
-        if (gradientEnableInput && gradientEnableInput.value !== "none" && gradientEnableInput.value !== "fara") {
+        /* FUNDAL / GRADIENT */
+        if (gradientEnableInput.value !== "none" && gradientEnableInput.value !== "fara") {
             const grad = ctx.createLinearGradient(0, 0, size, size);
             grad.addColorStop(0, gradientColor1Input.value);
             grad.addColorStop(1, gradientColor2Input.value);
@@ -93,10 +75,10 @@ function generateCustomQR(text, size, colorDark, colorLight, logoFile) {
             ctx.fillRect(0, 0, size, size);
         }
 
-        /* DESENĂM QR-UL */
+        /* QR */
         ctx.drawImage(img, 0, 0, size, size);
 
-        /* PREMIUM: BORDER */
+        /* BORDER */
         const borderSize = parseInt(borderSizeInput.value, 10);
         if (!isNaN(borderSize) && borderSize > 0) {
             ctx.strokeStyle = borderColorInput.value;
@@ -104,7 +86,7 @@ function generateCustomQR(text, size, colorDark, colorLight, logoFile) {
             ctx.strokeRect(borderSize / 2, borderSize / 2, size - borderSize, size - borderSize);
         }
 
-        /* PREMIUM: LOGO */
+        /* LOGO */
         if (logoFile) {
             const logoImg = new Image();
             logoImg.onload = () => {
@@ -119,10 +101,6 @@ function generateCustomQR(text, size, colorDark, colorLight, logoFile) {
                 if (pos === "bottom") y = size - logoSize - size * 0.1;
                 if (pos === "left") x = size * 0.1;
                 if (pos === "right") x = size - logoSize - size * 0.1;
-                if (pos === "centru" || pos === "center") {
-                    x = (size - logoSize) / 2;
-                    y = (size - logoSize) / 2;
-                }
 
                 ctx.save();
                 ctx.globalAlpha = parseInt(logoOpacityInput.value, 10) / 100 || 1;
@@ -136,58 +114,51 @@ function generateCustomQR(text, size, colorDark, colorLight, logoFile) {
             logoImg.src = URL.createObjectURL(logoFile);
         }
 
-        /* Afișăm canvas-ul în interfață */
+        /* Afișare */
         qrContainer.innerHTML = "";
         qrContainer.appendChild(canvas);
 
-        /* Salvăm canvas-ul pentru PNG/PDF */
+        /* Salvare pentru PNG/PDF */
         window.generatedCanvas = canvas;
-
-    }, 100);
+    };
 }
 
-/* LIVE UPDATE CONTROLS */
+/* Butonul principal */
+generateBtn.addEventListener('click', regenerateQR);
 
-/* Culori + dimensiune */
-qrColorInput.addEventListener("input", () => generateBtn.click());
-bgColorInput.addEventListener("input", () => generateBtn.click());
-sizeInput.addEventListener("input", () => generateBtn.click());
-
-/* Gradient */
-if (gradientEnableInput) {
-    gradientEnableInput.addEventListener("change", () => generateBtn.click());
-    gradientColor1Input.addEventListener("input", () => generateBtn.click());
-    gradientColor2Input.addEventListener("input", () => generateBtn.click());
-}
-
-/* Margine */
-borderSizeInput.addEventListener("input", () => generateBtn.click());
-borderColorInput.addEventListener("input", () => generateBtn.click());
-
-/* Logo premium */
-logoRotateInput.addEventListener("input", () => generateBtn.click());
-logoOpacityInput.addEventListener("input", () => generateBtn.click());
-logoScaleInput.addEventListener("input", () => generateBtn.click());
-logoPositionInput.addEventListener("change", () => generateBtn.click());
+/* LIVE UPDATE — toate controalele */
+[
+    qrColorInput,
+    bgColorInput,
+    sizeInput,
+    gradientEnableInput,
+    gradientColor1Input,
+    gradientColor2Input,
+    borderSizeInput,
+    borderColorInput,
+    logoRotateInput,
+    logoOpacityInput,
+    logoScaleInput,
+    logoPositionInput
+].forEach(el => {
+    if (el) el.addEventListener("input", regenerateQR);
+    if (el) el.addEventListener("change", regenerateQR);
+});
 
 /* Logo upload */
-logoInput.addEventListener("change", () => generateBtn.click());
+logoInput.addEventListener("change", regenerateQR);
 
-/* DESCĂRCARE PNG */
+/* PNG */
 downloadBtn.addEventListener('click', () => {
     if (!window.generatedCanvas) return;
 
-    const dataURL = window.generatedCanvas.toDataURL("image/png");
-
     const link = document.createElement('a');
-    link.href = dataURL;
+    link.href = window.generatedCanvas.toDataURL("image/png");
     link.download = 'qrcode.png';
-    document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
 });
 
-/* EXPORT PDF */
+/* PDF */
 pdfBtn.addEventListener('click', () => {
     if (!window.generatedCanvas) return;
 
