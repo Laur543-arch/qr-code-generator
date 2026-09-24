@@ -14,6 +14,7 @@
 
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
@@ -72,7 +73,7 @@
         <div class="options-block">
           <h3 data-i18n="section_optional">Opțiuni opționale (logo)</h3>
           <p class="hint-text" data-i18n="hint_logo">
-            Dacă adaugi un logo, acesta va apărea în codul QR generat și în fișierul PNG descărcat.
+            Dacă adaugi un logo, acesta va apărea în codul QR generat și în fișierul PNG/PDF descărcat.
           </p>
 
           <div class="form-grid logo-grid">
@@ -93,6 +94,7 @@
       <div class="actions-row">
         <button id="generate-btn" class="btn btn-primary" data-i18n="btn_generate">Generează QR</button>
         <button id="download-btn" class="btn btn-outline" disabled data-i18n="btn_download">Descarcă PNG</button>
+        <button id="pdf-btn" class="btn btn-outline" disabled data-i18n="btn_pdf">Export PDF</button>
       </div>
 
       <div class="qr-wrapper">
@@ -102,13 +104,72 @@
 
     <section class="card card-premium">
       <h2 data-i18n="premium_title">Funcții Premium</h2>
+
+      <div class="form-grid">
+        <!-- Logo avansat -->
+        <div class="form-group">
+          <label for="logo-rotate" data-i18n="premium_logo_rotate">Rotire logo (°)</label>
+          <input type="range" id="logo-rotate" min="0" max="360" value="0">
+        </div>
+
+        <div class="form-group">
+          <label for="logo-opacity" data-i18n="premium_logo_opacity">Transparență logo (%)</label>
+          <input type="range" id="logo-opacity" min="20" max="100" value="100">
+        </div>
+
+        <div class="form-group">
+          <label for="logo-scale" data-i18n="premium_logo_scale">Mărime logo (%)</label>
+          <input type="range" id="logo-scale" min="10" max="40" value="20">
+        </div>
+
+        <div class="form-group">
+          <label for="logo-position" data-i18n="premium_logo_position">Poziție logo</label>
+          <select id="logo-position">
+            <option value="center" data-i18n="pos_center">Centru</option>
+            <option value="top" data-i18n="pos_top">Sus</option>
+            <option value="bottom" data-i18n="pos_bottom">Jos</option>
+            <option value="left" data-i18n="pos_left">Stânga</option>
+            <option value="right" data-i18n="pos_right">Dreapta</option>
+          </select>
+        </div>
+
+        <!-- Gradient -->
+        <div class="form-group">
+          <label for="gradient-enable" data-i18n="premium_gradient_enable">Gradient QR</label>
+          <select id="gradient-enable">
+            <option value="none" data-i18n="grad_none">Fără</option>
+            <option value="linear" data-i18n="grad_linear">Linear</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="gradient-color1" data-i18n="premium_gradient_color1">Gradient culoare 1</label>
+          <input type="color" id="gradient-color1" value="#d32f2f">
+        </div>
+
+        <div class="form-group">
+          <label for="gradient-color2" data-i18n="premium_gradient_color2">Gradient culoare 2</label>
+          <input type="color" id="gradient-color2" value="#000000">
+        </div>
+
+        <!-- Margine -->
+        <div class="form-group">
+          <label for="border-size" data-i18n="premium_border_size">Grosime margine (px)</label>
+          <input type="number" id="border-size" min="0" max="40" value="0">
+        </div>
+
+        <div class="form-group">
+          <label for="border-color" data-i18n="premium_border_color">Culoare margine</label>
+          <input type="color" id="border-color" value="#000000">
+        </div>
+      </div>
+
       <ul class="premium-list">
         <li data-i18n="premium_pdf">Export PDF</li>
-        <li data-i18n="premium_logo_adv">Logo variabil: rotire, transparență, poziționare</li>
+        <li data-i18n="premium_logo_adv">Logo variabil: rotire, transparență, poziționare, mărime</li>
         <li data-i18n="premium_border">QR cu margine</li>
         <li data-i18n="premium_gradient">QR cu gradient</li>
       </ul>
-      <button id="pdf-btn" class="btn btn-disabled" disabled data-i18n="btn_pdf">Export PDF (în curând)</button>
     </section>
 
     <section class="card card-contact">
