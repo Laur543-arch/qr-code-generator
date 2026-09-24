@@ -176,6 +176,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   detectLanguage();
   applyTranslations();
 
+  // Activează vizual limba curentă
+  document.querySelectorAll(".lang-btn").forEach(btn => {
+    if (btn.dataset.lang === currentLang) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+   
   document.querySelectorAll(".lang-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       switchLanguage(btn.dataset.lang);
