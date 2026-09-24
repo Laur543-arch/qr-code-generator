@@ -2,70 +2,101 @@
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
-    <title>Generator QR Premium</title>
+    <title>Qrio – Generator QR Premium</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- Librărie QRCodeJS -->
     <script src="js/qrcode.min.js"></script>
-
-    <!-- jsPDF (pentru PDF) -->
     <script src="js/jspdf.umd.min.js"></script>
 </head>
 <body>
 
-<div class="app-container">
+<div class="app-shell">
 
     <!-- HEADER -->
-    <header class="header">
-        <h1>Generator QR Premium</h1>
-        <p>Creează coduri QR profesionale pentru branduri, produse și evenimente.</p>
+    <header class="app-header">
+        <div class="brand">
+            <div class="brand-logo">Q</div>
+            <div class="brand-text">
+                <h1>Qrio</h1>
+                <p>Creează un cod QR care arată bine.</p>
+            </div>
+        </div>
+        <p class="header-subtitle">Configurează, verifică și descarcă în câteva secunde.</p>
     </header>
 
-    <div class="main-layout">
+    <!-- MAIN LAYOUT -->
+    <main class="app-main">
 
-        <!-- PANOU SETĂRI (STÂNGA) -->
-        <section class="settings-panel">
+        <!-- STÂNGA: CONFIGURARE -->
+        <section class="config-column">
 
-            <!-- SETĂRI DE BAZĂ -->
-            <div class="settings-group">
-                <h2>Setări de bază</h2>
+            <!-- CONȚINUT -->
+            <div class="card config-card">
+                <h2>Conținut</h2>
 
-                <label>Text sau URL</label>
-                <input id="qr-input" type="text">
+                <label for="qr-input">URL sau text</label>
+                <input id="qr-input" type="text" placeholder="https://exemplu.ro">
 
-                <label>Culoare QR</label>
-                <input id="qr-color" type="color">
+                <div class="field-row">
+                    <span id="content-status" class="status-pill status-ok">Conținut valid</span>
+                    <button id="reset-btn" type="button" class="text-button">Reset</button>
+                </div>
+            </div>
 
-                <label>Culoare fundal</label>
-                <input id="bg-color" type="color">
+            <!-- ASPECT -->
+            <div class="card config-card">
+                <h2>Aspect</h2>
 
-                <label>Dimensiune (px)</label>
-                <input id="qr-size" type="number" min="100" max="1000">
+                <div class="field-row">
+                    <div class="field-block">
+                        <label>Culoare QR</label>
+                        <input id="qr-color" type="color" value="#2b1b5f">
+                    </div>
+                    <div class="field-block">
+                        <label>Culoare fundal</label>
+                        <input id="bg-color" type="color" value="#ffffff">
+                    </div>
+                </div>
 
-                <button id="generate-btn">Generează QR</button>
+                <label for="qr-size">Dimensiune</label>
+                <div class="slider-row">
+                    <input id="qr-size" type="range" min="200" max="600" value="400">
+                    <span id="qr-size-label">400 px</span>
+                </div>
+
+                <div class="field-row">
+                    <span id="contrast-status" class="status-pill status-ok">
+                        Contrast bun, ușor de scanare
+                    </span>
+                </div>
             </div>
 
             <!-- LOGO -->
-            <div class="settings-group">
+            <div class="card config-card">
                 <h2>Logo</h2>
 
-                <label>Logo (PNG/JPG)</label>
+                <label for="logo-input">Fișier logo (PNG/JPG)</label>
                 <input id="logo-input" type="file" accept="image/*">
-                <button id="clear-logo-btn">Șterge logo</button>
 
-                <label>Rotire logo (°)</label>
-                <input id="logo-rotate" type="range" min="0" max="360">
+                <div class="field-row">
+                    <button id="clear-logo-btn" type="button" class="text-button">Șterge logo</button>
+                </div>
 
-                <label>Transparență logo (%)</label>
-                <input id="logo-opacity" type="range" min="0" max="100">
+                <label for="logo-scale">Dimensiune logo</label>
+                <div class="slider-row">
+                    <input id="logo-scale" type="range" min="10" max="40" value="22">
+                    <span id="logo-scale-label">22%</span>
+                </div>
 
-                <label>Mărime logo (%)</label>
-                <input id="logo-scale" type="range" min="10" max="100">
+                <label for="logo-opacity">Transparență logo</label>
+                <div class="slider-row">
+                    <input id="logo-opacity" type="range" min="0" max="100" value="0">
+                    <span id="logo-opacity-label">0%</span>
+                </div>
 
-                <label>Poziție logo</label>
+                <label for="logo-position">Poziție logo</label>
                 <select id="logo-position">
                     <option value="centru">Centru</option>
                     <option value="top">Sus</option>
@@ -75,53 +106,82 @@
                 </select>
             </div>
 
-            <!-- EFECTE PREMIUM -->
-            <div class="settings-group">
-                <h2>Efecte Premium</h2>
+            <!-- EFECTE AVANSATE -->
+            <div class="card config-card">
+                <h2>Efecte avansate</h2>
 
-                <label>Gradient QR</label>
-                <select id="gradient-enable">
-                    <option value="none">Fără</option>
-                    <option value="linear">Linear</option>
-                </select>
+                <div class="field-row">
+                    <label for="gradient-enable">Gradient QR</label>
+                    <select id="gradient-enable">
+                        <option value="none">Fără</option>
+                        <option value="linear">Linear</option>
+                    </select>
+                </div>
 
-                <label>Gradient culoare 1</label>
-                <input id="gradient-color1" type="color">
+                <div class="field-row">
+                    <div class="field-block">
+                        <label>Culoare 1</label>
+                        <input id="gradient-color1" type="color" value="#2b1b5f">
+                    </div>
+                    <div class="field-block">
+                        <label>Culoare 2</label>
+                        <input id="gradient-color2" type="color" value="#000000">
+                    </div>
+                </div>
 
-                <label>Gradient culoare 2</label>
-                <input id="gradient-color2" type="color">
-
-                <label>Culoare margine</label>
-                <input id="border-color" type="color">
-
-                <label>Grosime margine (px)</label>
-                <input id="border-size" type="number" min="0" max="50">
+                <div class="field-row">
+                    <div class="field-block">
+                        <label>Culoare margine</label>
+                        <input id="border-color" type="color" value="#2b1b5f">
+                    </div>
+                    <div class="field-block">
+                        <label>Grosime margine</label>
+                        <input id="border-size" type="number" min="0" max="20" value="2">
+                    </div>
+                </div>
             </div>
 
         </section>
 
-        <!-- PREVIEW QR (DREAPTA) -->
-        <section class="preview-panel">
-            <div id="qrcode" class="qr-preview"></div>
+        <!-- DREAPTA: PREVIZUALIZARE -->
+        <section class="preview-column">
 
-            <div class="export-buttons">
-                <button id="download-btn" disabled>Descarcă PNG</button>
-                <button id="pdf-btn" disabled>Export PDF</button>
-                <button id="svg-btn" disabled>Export SVG</button>
+            <div class="card preview-card">
+                <div class="preview-header">
+                    <h2>Previzualizare</h2>
+                    <span id="scan-status" class="status-pill status-ok">
+                        Scanabil, contrast bun
+                    </span>
+                </div>
+
+                <div class="preview-body">
+                    <div id="qrcode" class="qr-preview"></div>
+                </div>
+
+                <div class="preview-footer">
+                    <button id="download-btn" type="button" class="primary-button" disabled>
+                        Descarcă PNG
+                    </button>
+                    <button id="pdf-btn" type="button" class="secondary-button" disabled>
+                        Descarcă PDF
+                    </button>
+                    <button id="svg-btn" type="button" class="secondary-button" disabled>
+                        Descarcă SVG
+                    </button>
+                </div>
             </div>
+
         </section>
 
-    </div>
+    </main>
 
     <!-- FOOTER -->
-    <footer class="footer">
-        <p>Contact: laurentiu@example.com</p>
-        <p>WhatsApp: 07xx xxx xxx</p>
+    <footer class="app-footer">
+        <span>Qrio · Generator QR Premium</span>
     </footer>
 
 </div>
 
-<!-- SCRIPT JS -->
 <script src="script.js"></script>
 
 </body>
