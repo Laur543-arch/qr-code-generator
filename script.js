@@ -34,12 +34,7 @@ function detectLanguage() {
   }
 
   const browserLang = navigator.language || navigator.userLanguage;
-
-  if (browserLang.startsWith("ro")) {
-    currentLang = "ro";
-  } else {
-    currentLang = "en";
-  }
+  currentLang = browserLang.startsWith("ro") ? "ro" : "en";
 }
 
 /* Schimbare limbă manual */
@@ -47,6 +42,30 @@ function switchLanguage(lang) {
   currentLang = lang;
   localStorage.setItem("app_lang", lang);
   applyTranslations();
+
+  document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.lang === currentLang);
+  });
+}
+
+/* ============================
+   DARK MODE
+   ============================ */
+
+function applyDarkMode() {
+  const isDark = localStorage.getItem("dark_mode") === "true";
+  document.body.classList.toggle("dark", isDark);
+
+  const btn = document.getElementById("darkmode-btn");
+  if (btn) {
+    btn.textContent = isDark ? "☀️" : "🌙";
+  }
+}
+
+function toggleDarkMode() {
+  const current = localStorage.getItem("dark_mode") === "true";
+  localStorage.setItem("dark_mode", !current);
+  applyDarkMode();
 }
 
 /* ============================
@@ -178,13 +197,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Activează vizual limba curentă
   document.querySelectorAll(".lang-btn").forEach(btn => {
-    if (btn.dataset.lang === currentLang) {
-      btn.classList.add("active");
-    } else {
-      btn.classList.remove("active");
-    }
+    btn.classList.toggle("active", btn.dataset.lang === currentLang);
   });
-   
+
+  // Activează Dark Mode la încărcare
+  applyDarkMode();
+
+  // Activare buton Dark Mode
+  const darkBtn = document.getElementById("darkmode-btn");
+  if (darkBtn) {
+    darkBtn.addEventListener("click", toggleDarkMode);
+  }
+
+  // Activare butoane limbă
   document.querySelectorAll(".lang-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       switchLanguage(btn.dataset.lang);
