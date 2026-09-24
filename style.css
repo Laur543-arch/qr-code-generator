@@ -1,27 +1,30 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* ============================
+   RESET & BASE
+   ============================ */
 
 body {
-  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #f3f3f3;
-  color: #1b1b1b;
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #f5f5f5;
+  color: #333;
+  transition: background 0.3s, color 0.3s;
 }
 
-/* HEADER */
+h1, h2, h3 {
+  margin-top: 0;
+}
+
+/* ============================
+   HEADER
+   ============================ */
 
 .app-header {
-  background: #0078d4;
-  color: #ffffff;
-  padding: 12px 24px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  background: #ffffff;
+  padding: 12px 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .header-inner {
-  max-width: 1100px;
-  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -30,7 +33,7 @@ body {
 .brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .brand-logo {
@@ -39,238 +42,17 @@ body {
 }
 
 .brand-name {
-  font-weight: 600;
   font-size: 18px;
-}
-
-.header-title {
-  font-size: 16px;
-  opacity: 0.9;
-}
-
-/* MAIN */
-
-.app-main {
-  max-width: 1100px;
-  margin: 24px auto;
-  padding: 0 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.card {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 16px 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-}
-
-.card-main h1 {
-  font-size: 22px;
-  margin-bottom: 12px;
-}
-
-.card-premium h2,
-.card-contact h2 {
-  font-size: 18px;
-  margin-bottom: 8px;
-}
-
-/* OPTIONS BLOCKS */
-
-.options-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.options-block {
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  padding: 10px 12px;
-  background: #fafafa;
-}
-
-.options-block h3 {
-  font-size: 15px;
-  margin-bottom: 6px;
-}
-
-.hint-text {
-  font-size: 13px;
-  color: #555555;
-  margin-bottom: 8px;
-}
-
-/* FORM */
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 10px;
-}
-
-.logo-grid {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.form-group-inline {
-  justify-content: flex-end;
-}
-
-label {
-  font-size: 13px;
   font-weight: 600;
-}
-
-input[type="text"],
-input[type="number"],
-input[type="file"] {
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #c8c8c8;
-  font-size: 14px;
-}
-
-input[type="color"] {
-  width: 40px;
-  height: 32px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-
-/* BUTTONS */
-
-.btn {
-  border: none;
-  border-radius: 4px;
-  padding: 8px 14px;
-  font-size: 14px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.btn-primary {
-  background: #0078d4;
-  color: #ffffff;
-}
-
-.btn-primary:hover {
-  background: #005ea6;
-}
-
-.btn-outline {
-  background: #ffffff;
-  color: #0078d4;
-  border: 1px solid #0078d4;
-}
-
-.btn-outline:hover {
-  background: #e6f2ff;
-}
-
-.btn-secondary {
-  background: #f3f3f3;
-  color: #1b1b1b;
-  border: 1px solid #c8c8c8;
-}
-
-.btn-secondary:hover {
-  background: #e0e0e0;
-}
-
-.btn-disabled {
-  background: #e0e0e0;
-  color: #777777;
-  cursor: not-allowed;
-}
-
-/* ACTIONS */
-
-.actions-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-/* QR */
-
-.qr-wrapper {
-  margin-top: 16px;
-  display: flex;
-  justify-content: center;
-}
-
-.qr-container {
-  padding: 12px;
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-  max-width: 100%;
-  overflow: auto;
-}
-
-/* PREMIUM */
-
-.premium-list {
-  list-style: disc;
-  margin-left: 18px;
-  margin-bottom: 10px;
-}
-
-/* CONTACT */
-
-.card-contact p {
-  margin-bottom: 6px;
-  font-size: 14px;
-}
-
-/* FOOTER */
-
-.app-footer {
-  max-width: 1100px;
-  margin: 0 auto 16px auto;
-  padding: 0 16px;
-  font-size: 12px;
-  color: #555555;
-}
-
-/* RESPONSIVE */
-
-@media (max-width: 600px) {
-  .header-inner {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-
-  .qr-container {
-    padding: 8px;
-  }
 }
 
 /* ============================
-   SELECTOR LIMBĂ (RO / EN)
+   LANG SWITCH
    ============================ */
 
 .lang-switch {
   display: flex;
   gap: 8px;
-  align-items: center;
 }
 
 .lang-btn {
@@ -291,13 +73,152 @@ input[type="color"] {
 .lang-btn.active {
   background: #0078d4;
   color: #ffffff;
-  border-color: #005ea6;
 }
 
-@media (max-width: 600px) {
-  .lang-switch {
-    margin-top: 6px;
-  }
+/* ============================
+   DARK MODE BUTTON
+   ============================ */
+
+.darkmode-btn {
+  background: #ffffff;
+  border: 1px solid #444;
+  color: #444;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.darkmode-btn:hover {
+  background: #e6e6e6;
+}
+
+/* ============================
+   MAIN CONTENT
+   ============================ */
+
+.app-main {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.card {
+  background: #ffffff;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="file"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+input[type="color"] {
+  width: 100%;
+  height: 40px;
+  border: none;
+  cursor: pointer;
+}
+
+/* ============================
+   BUTTONS
+   ============================ */
+
+.btn {
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: #0078d4;
+  color: #ffffff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #005ea6;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid #0078d4;
+  color: #0078d4;
+}
+
+.btn-outline:hover {
+  background: #e6f2ff;
+}
+
+.btn-secondary {
+  background: #f0f0f0;
+  border: 1px solid #cccccc;
+}
+
+.btn-secondary:hover {
+  background: #e6e6e6;
+}
+
+.btn-disabled {
+  background: #dddddd;
+  color: #888888;
+  border: none;
+  cursor: not-allowed;
+}
+
+/* ============================
+   QR CONTAINER
+   ============================ */
+
+.qr-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ============================
+   PREMIUM SECTION
+   ============================ */
+
+.premium-list {
+  padding-left: 20px;
+}
+
+.premium-list li {
+  margin-bottom: 6px;
+}
+
+/* ============================
+   FOOTER
+   ============================ */
+
+.app-footer {
+  text-align: center;
+  padding: 20px;
+  color: #666;
 }
 
 /* ============================
@@ -369,6 +290,16 @@ body.dark .lang-btn {
 body.dark .lang-btn.active {
   background: #66b0ff;
   color: #1e1e1e;
+}
+
+body.dark .darkmode-btn {
+  background: #3a3a3a;
+  border-color: #888;
+  color: #e6e6e6;
+}
+
+body.dark .darkmode-btn:hover {
+  background: #555;
 }
 
 body.dark .app-footer {
